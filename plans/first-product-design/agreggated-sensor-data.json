@@ -1,0 +1,105 @@
+{
+  "aggregatedFrom": "/Users/nimbus/dev/harvverse-hackaton-miami-2026/plans/first-product-design/sensor-data-50e963ae-2024-12-01_2026-04-27.json",
+  "exportedAt": "2026-04-27T20:09:40.814Z",
+  "module": {
+    "id": "50e963ae-6454-436f-b8b3-4a3740b22572",
+    "name": "Sensores Planta Prueba Harvverse"
+  },
+  "dateRange": {
+    "from": "2024-12-01T06:00:00.000Z",
+    "to": "2026-04-27T20:09:25.712Z"
+  },
+  "note": "ISO week (Monday start), UTC. average = arithmetic mean of all readings in the week for that sensor type.",
+  "weeklyAverages": {
+    "ambientTemperature": [
+      {
+        "week": "2025-W16",
+        "year": 2025,
+        "weekNumber": 16,
+        "average": 17.50428573057143,
+        "count": 70
+      },
+      {
+        "week": "2025-W17",
+        "year": 2025,
+        "weekNumber": 17,
+        "average": 16.747290662857143,
+        "count": 203
+      },
+      {
+        "week": "2025-W18",
+        "year": 2025,
+        "weekNumber": 18,
+        "average": 17.969841328650794,
+        "count": 252
+      },
+      {
+        "week": "2025-W19",
+        "year": 2025,
+        "weekNumber": 19,
+        "average": 19.64174754883495,
+        "count": 103
+      }
+    ],
+    "ambientHumidity": [
+      {
+        "week": "2025-W16",
+        "year": 2025,
+        "weekNumber": 16,
+        "average": 31.832967113109888,
+        "count": 91
+      },
+      {
+        "week": "2025-W17",
+        "year": 2025,
+        "weekNumber": 17,
+        "average": 51.71079792737559,
+        "count": 213
+      },
+      {
+        "week": "2025-W18",
+        "year": 2025,
+        "weekNumber": 18,
+        "average": 15.593089502479675,
+        "count": 246
+      },
+      {
+        "week": "2025-W19",
+        "year": 2025,
+        "weekNumber": 19,
+        "average": 1.0,
+        "count": 98
+      }
+    ],
+    "soilHumidity": [
+      {
+        "week": "2025-W16",
+        "year": 2025,
+        "weekNumber": 16,
+        "average": 68.4453781512605,
+        "count": 119
+      },
+      {
+        "week": "2025-W17",
+        "year": 2025,
+        "weekNumber": 17,
+        "average": 68.30913978494624,
+        "count": 372
+      },
+      {
+        "week": "2025-W18",
+        "year": 2025,
+        "weekNumber": 18,
+        "average": 62.37027027027027,
+        "count": 370
+      },
+      {
+        "week": "2025-W19",
+        "year": 2025,
+        "weekNumber": 19,
+        "average": 50.05035971223022,
+        "count": 139
+      }
+    ]
+  }
+}

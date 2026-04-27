@@ -72,7 +72,7 @@ Every story carries a `Source:` reference back to the section of `fpd.md` it der
   *Source: §4.3, §11.1*
 
 - **US-1.2 (E)** — When deployment completes, the system shall grant `DEFAULT_ADMIN_ROLE`, `CONFIGURATOR_ROLE`, `MINTER_ROLE`, `ATTESTER_ROLE`, and `SETTLEMENT_OPERATOR_ROLE` to the configured admin/operator wallets.
-  *Source: §4.4, §4.5, §5.3, §9.2*
+  *Source: §4.4, §4.5, §5.4, §9.2*
 
 - **US-1.3 (U)** — The Contract Deployer shall be able to register every active deployment (`chainKey`, `chainId`, `contractName`, `address`, `abiHash`, `deployTxHash`) into the Convex `contractDeployments` table so that Convex never trusts client-supplied contract addresses.
   *Source: §10 (`contractDeployments`), §12.1 (`registerDeployment`)*
@@ -111,24 +111,27 @@ Every story carries a `Source:` reference back to the section of `fpd.md` it der
 ### 4.1 Plan Seeding
 
 - **US-2.1 (E)** — When the Admin calls `seedFirstLot` with a valid session, plan hash, source URI, farmer wallet, and escrow wallet, the system shall insert one `lots` row, one `plans` row with status `approved_for_demo`, patch `lots.activePlanId`, and insert one `custodyAccounts` row of type `demo_escrow`.
-  *Source: §5.2*
+  *Source: §5.3*
 
 - **US-2.2 (Un)** — If the caller of `seedFirstLot` does not hold the `admin` role, then the mutation shall reject with an authorization error.
-  *Source: §5.2 (`requireRole`)*
+  *Source: §5.3 (`requireRole`)*
 
 - **US-2.3 (U)** — The system shall never store `undefined` in any Convex document; optional fields shall be omitted at insert time and patched only when defined values exist.
-  *Source: §5.2 narrative*
+  *Source: §5.3 narrative*
 
 - **US-2.4 (U)** — Wallet addresses persisted in Convex shall be normalized to lowercase before insertion.
-  *Source: §5.2 (`.toLowerCase()` calls)*
+  *Source: §5.3 (`.toLowerCase()` calls)*
+
+- **US-2.9 (E)** — When `seedFirstLot` succeeds, the system shall insert six `milestones` rows for `HVPLAN-ZAF-L02-2026` matching M1 through M6 from the Zafiro agronomic plan, including number, name, month range, cash cents, marketplace cents, total cents, and required evidence keys.
+  *Source: §5.2, §5.3*
 
 ### 4.2 Plan Hash Anchoring
 
 - **US-2.5 (E)** — When the Admin or Verifier calls `EvidenceRegistry.attestEvidence(planHash, lotId, 0, "HarvversePlan")`, the contract shall emit `EvidenceAttested`, and Convex shall reconcile the transaction into the `chainTransactions` and `evidenceRecords` tables.
-  *Source: §3 (Phase 2 sequence), §5.3*
+  *Source: §3 (Phase 2 sequence), §5.4*
 
 - **US-2.6 (Un)** — If the caller of `attestEvidence` does not hold `ATTESTER_ROLE` or supplies `evidenceHash == bytes32(0)`, then the call shall revert.
-  *Source: §5.3 (require + `onlyRole`)*
+  *Source: §5.4 (require + `onlyRole`)*
 
 ### 4.3 Evidence as Accountable Claims
 
@@ -268,11 +271,11 @@ Every story carries a `Source:` reference back to the section of `fpd.md` it der
 
 ## 7. Phase 5 — Milestone Attestations
 
-> **Source:** `fpd.md` §8
+> **Source:** `fpd.md` §5.2, §8
 
 ### 7.1 Compressed Demo Time
 
-- **US-5.1 (E)** — When the Admin clicks "Fast-forward milestone fixture" on the admin milestone page, the UI shall display the fixture as compressed demo time and shall expose evidence-creation actions.
+- **US-5.1 (E)** — When the Admin clicks "Fast-forward milestone fixture" on the admin milestone page, the UI shall load the active plan's six seeded milestone rows, display the fixture as compressed demo time, and expose evidence-creation actions for M1 through M6.
   *Source: §8.1*
 
 - **US-5.2 (U)** — The system shall label every fixture-derived evidence record as compressed demo time wherever it is rendered in the UI.
@@ -289,18 +292,21 @@ Every story carries a `Source:` reference back to the section of `fpd.md` it der
 ### 7.3 Onchain Attestation
 
 - **US-5.5 (E)** — When the Verifier or Admin calls `EvidenceRegistry.attestEvidence(evidenceHash, subjectId, milestoneNumber, schemaName)`, the contract shall emit `EvidenceAttested`, and Convex shall update the corresponding `evidenceRecords` row to status `attested` with the `registryTxHash`.
-  *Source: §5.3, §8.3*
+  *Source: §5.4, §8.3*
 
 - **US-5.6 (Un)** — If `evidenceHash == bytes32(0)`, then `attestEvidence` shall revert.
-  *Source: §5.3*
+  *Source: §5.4*
 
 - **US-5.7 (Un)** — If the caller of `attestEvidence` does not hold `ATTESTER_ROLE`, then the call shall revert with an AccessControl error.
-  *Source: §5.3*
+  *Source: §5.4*
 
 ### 7.4 Optional EAS Backend
 
 - **US-5.8 (O)** — Where EAS is enabled and a stable EAS deployment exists on the active chain, the system shall record `easUid` on the evidence record; otherwise the system shall fall back to `EvidenceRegistry` and label the attestation as "local registry" in the UI.
   *Source: §8 EAS decision, §15 ("EAS unavailable")*
+
+- **US-5.9 (E)** — When all six milestone fixture evidence records for a partnership have status `attested`, the Convex System shall be able to move the partnership to `milestones_attested`; when the Admin closes the compressed milestone fixture, the system shall move it to `awaiting_settlement`.
+  *Source: §8.1, §9.4*
 
 ---
 
@@ -445,12 +451,12 @@ Every story carries a `Source:` reference back to the section of `fpd.md` it der
 | FPD Section | User Stories |
 | --- | --- |
 | §4 Phase 1 | US-1.1, US-1.2, US-1.3, US-1.4, US-1.5, US-1.6, US-1.7, US-1.8, US-1.9, US-1.10 |
-| §5 Phase 2 | US-2.1, US-2.2, US-2.3, US-2.4, US-2.5, US-2.6, US-2.7, US-2.8 |
+| §5 Phase 2 | US-2.1, US-2.2, US-2.3, US-2.4, US-2.5, US-2.6, US-2.7, US-2.8, US-2.9 |
 | §6 Phase 3 | US-3.1, US-3.2, US-3.3, US-3.4, US-3.5, US-3.6, US-3.7, US-3.8, US-3.9, US-3.10, US-3.11, US-3.12 |
 | §7 Phase 4 | US-4.1 — US-4.20 |
-| §8 Phase 5 | US-5.1, US-5.2, US-5.3, US-5.4, US-5.5, US-5.6, US-5.7, US-5.8 |
+| §8 Phase 5 | US-5.1, US-5.2, US-5.3, US-5.4, US-5.5, US-5.6, US-5.7, US-5.8, US-5.9 |
 | §9 Phase 6 | US-6.1 — US-6.16 |
-| §10 Data Model | US-1.3, US-2.1, US-2.3, US-2.4, US-X.17 |
+| §10 Data Model | US-1.3, US-2.1, US-2.3, US-2.4, US-2.9, US-X.17 |
 | §11 Contracts | US-1.1, US-1.4, US-X.15, US-X.16 |
 | §12 Convex Functions | US-X.1, US-X.2, US-X.18 |
 | §13 Routing & Auth | US-3.1, US-3.3 — US-3.6, US-X.3 |
@@ -466,11 +472,9 @@ These items were flagged while drafting the user stories. Resolve before treatin
 1. **Platform fee base (§16 Q4)** — The seed sets `platformFeeCents: 16_400`, which is ~10% of `agronomicCostCents + contingencyCents`, not 10% of the ticket. No story can lock this until the definition is chosen.
 2. **One vs two wallet prompts (§16 Q6)** — US-4.1 and US-4.3 assume two prompts. If the demo moves to a single prompt (e.g. EIP-5792 batch), Phase 4 stories will change shape.
 3. **Settlement payout unit (§9.2 contract)** — `settle` transfers `farmerCents * 10_000` and `partnerCents * 10_000`. That maps cents to USDC 6-decimal base units assuming `$1 = 100 cents = 1_000_000 base units`. Confirm before locking US-6.7.
-4. **Milestone count and cadence** — The FPD references "compressed milestone fixture" but does not enumerate milestones. Phase 5 stories are intentionally generic. If you want one story per milestone, add them.
-5. **`AttestEvidenceButton` argument typing (§8.3)** — The component passes `evidenceRecordId` into `recordSubmitted` as `partnershipId`. Either it is a code bug or the requirement should explicitly say "evidence attestation tx is keyed by evidence record". US-5.5 currently states the intent loosely; clarify before implementation.
-6. **Final testnet selection (§16 Q1)** — Phase 1 stories cover all four supported chain keys. If Celo Sepolia is locked, US-1.8 / US-1.9 / US-1.10 can collapse to a single chain.
-7. **R2 yield floor (§16 Q5)** — Currently treated as deferred. No story claims a guaranteed return; confirm UI never implies one (US-X.9 covers the prohibition).
-8. **Convex Auth vs MVP wallet sessions (§16 Q3)** — US-3.3 specifies the MVP `walletSessions` table approach. If Convex Auth/JWT is adopted, US-3.3 / US-3.5 / US-X.1 need to be re-derived using `ctx.auth.getUserIdentity()`.
+4. **Final testnet selection (§16 Q1)** — Phase 1 stories cover all four supported chain keys. If Celo Sepolia is locked, US-1.8 / US-1.9 / US-1.10 can collapse to a single chain.
+5. **R2 yield floor (§16 Q5)** — Currently treated as deferred. No story claims a guaranteed return; confirm UI never implies one (US-X.9 covers the prohibition).
+6. **Convex Auth vs MVP wallet sessions (§16 Q3)** — US-3.3 specifies the MVP `walletSessions` table approach. If Convex Auth/JWT is adopted, US-3.3 / US-3.5 / US-X.1 need to be re-derived using `ctx.auth.getUserIdentity()`.
 
 ---
 

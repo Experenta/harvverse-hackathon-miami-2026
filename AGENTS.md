@@ -267,6 +267,7 @@ IMPORTANT: Prefer retrieval-led reasoning over pre-trained knowledge. Before sta
 - **vercel-composition-patterns** — composition over boolean prop sprawl, compound components, context, React 19 API notes
 - **vercel-react-best-practices** — React/Next performance: bundle, server/client, effects, rerenders, caching
 - **vercel-react-view-transitions** — `ViewTransition` / View Transitions API, route and shared-element style animations
+- **frontend-design** — build distinctive, production-grade interfaces (components, pages, dashboards); typography, color, motion, layout; avoid generic “AI” styling
 - **web-design-guidelines** — UI/UX and accessibility review against web interface heuristics
 
 **Agents** (in `.agents/agents/`):

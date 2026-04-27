@@ -446,7 +446,42 @@ Evidence is modeled as claims:
 
 > **Evidence decision:** The blockchain proves that an attester made a claim at a time. It does not prove the farm condition is true. The UI must make that boundary visible.
 
-### 5.2 Plan Seeding Mutation
+### 5.2 Milestone Setup for the Zafiro Example
+
+Milestones are modeled in two layers:
+
+| Layer | Table / Proof | Purpose |
+| ----- | ------------- | ------- |
+| Plan milestone template | `milestones` rows keyed by `planId` | The canonical M1-M6 agronomic schedule, month range, cost split, and expected evidence for `HVPLAN-ZAF-L02-2026`. These rows are created once when the plan is seeded. |
+| Partnership milestone evidence | `evidenceRecords` rows keyed by `partnershipId` + `milestoneNumber`, plus optional `EvidenceRegistry` events | The actual claim that a specific partnership reached a milestone. In the hackathon demo these are compressed-time fixture claims, not live farm observations. |
+
+For `plans/first-product-design/plan-agronomico-milestones.md`, seed exactly these six plan-level milestone templates:
+
+| # | Name | Months | Cash | Marketplace | Total | Required Evidence Keys |
+| - | ---- | ------ | ---- | ----------- | ----- | ---------------------- |
+| 1 | Diagnóstico & Línea Base | Feb | $25 | $85 | $110 | `soil_lab_report`, `sensor_install_photos`, `gps_polygon` |
+| 2 | Preparación & Poda | Mar-Apr | $115 | $155 | $270 | `before_after_pruning_photos`, `input_receipts`, `post_liming_ph_reading` |
+| 3 | Nutrición Base | Apr-May | $50 | $175 | $225 | `application_photos`, `fertilizer_receipts`, `soil_moisture_snapshot` |
+| 4 | Mantenimiento & Sanidad | Jun-Aug | $110 | $65 | $175 | `trap_photos`, `rust_risk_iot_report`, `fungicide_application_photos` |
+| 5 | Nutrición Refuerzo & Pre-cosecha | Aug-Sep | $40 | $170 | $210 | `cherry_development_photos`, `day_night_temperature_snapshot`, `cutting_plan` |
+| 6 | Cosecha & Beneficiado Premium | Oct-Dec | $355 | $105 | $460 | `harvest_pass_photos`, `fermentation_iot_report`, `drying_bed_photos`, `sca_cupping_report` |
+
+The six milestone totals add to `$1,450`. The separate `$40` annual IoT service from the agronomic plan is included in the MVP settlement cost basis (`agronomicCostCents: 149_000`) but is not a seventh milestone.
+
+The fund-release schedule from the agronomic plan is a demo/off-chain custody rule, not an onchain escrow rule in the MVP:
+
+| Release Trigger | Release Display |
+| --------------- | --------------- |
+| Partnership signed | Release M1 + M2 budget: `$380` |
+| M2 completed / attested | Release M3 budget: `$225` |
+| M3 completed / attested | Release M4 budget: `$175` |
+| M4 completed / attested | Release M5 budget: `$210` |
+| M5 completed / attested | Release M6 budget: `$460` |
+| M6 completed / attested | Cycle complete; settlement fixture can be created |
+
+Do not infer token transfers from milestone evidence in the MVP. `EvidenceRegistry` only proves that an authorized attester made a milestone claim. A future production release-flow should add an explicit release ledger or escrow module instead of overloading `evidenceRecords`.
+
+### 5.3 Plan Seeding Mutation
 
 Convex documents cannot store `undefined`. Omit optional fields when inserting rows, and patch them only when values exist.
 
@@ -524,12 +559,115 @@ export const seedFirstLot = mutation({
       updatedAt: now,
     });
 
+    const milestoneSeeds = [
+      {
+        number: 1,
+        name: "Diagnóstico & Línea Base",
+        monthStart: 2,
+        monthEnd: 2,
+        cashCents: 2_500,
+        marketplaceCents: 8_500,
+        totalCents: 11_000,
+        evidenceRequired: [
+          "soil_lab_report",
+          "sensor_install_photos",
+          "gps_polygon",
+        ],
+      },
+      {
+        number: 2,
+        name: "Preparación & Poda",
+        monthStart: 3,
+        monthEnd: 4,
+        cashCents: 11_500,
+        marketplaceCents: 15_500,
+        totalCents: 27_000,
+        evidenceRequired: [
+          "before_after_pruning_photos",
+          "input_receipts",
+          "post_liming_ph_reading",
+        ],
+      },
+      {
+        number: 3,
+        name: "Nutrición Base",
+        monthStart: 4,
+        monthEnd: 5,
+        cashCents: 5_000,
+        marketplaceCents: 17_500,
+        totalCents: 22_500,
+        evidenceRequired: [
+          "application_photos",
+          "fertilizer_receipts",
+          "soil_moisture_snapshot",
+        ],
+      },
+      {
+        number: 4,
+        name: "Mantenimiento & Sanidad",
+        monthStart: 6,
+        monthEnd: 8,
+        cashCents: 11_000,
+        marketplaceCents: 6_500,
+        totalCents: 17_500,
+        evidenceRequired: [
+          "trap_photos",
+          "rust_risk_iot_report",
+          "fungicide_application_photos",
+        ],
+      },
+      {
+        number: 5,
+        name: "Nutrición Refuerzo & Pre-cosecha",
+        monthStart: 8,
+        monthEnd: 9,
+        cashCents: 4_000,
+        marketplaceCents: 17_000,
+        totalCents: 21_000,
+        evidenceRequired: [
+          "cherry_development_photos",
+          "day_night_temperature_snapshot",
+          "cutting_plan",
+        ],
+      },
+      {
+        number: 6,
+        name: "Cosecha & Beneficiado Premium",
+        monthStart: 10,
+        monthEnd: 12,
+        cashCents: 35_500,
+        marketplaceCents: 10_500,
+        totalCents: 46_000,
+        evidenceRequired: [
+          "harvest_pass_photos",
+          "fermentation_iot_report",
+          "drying_bed_photos",
+          "sca_cupping_report",
+        ],
+      },
+    ] as const;
+
+    for (const milestone of milestoneSeeds) {
+      await ctx.db.insert("milestones", {
+        planId,
+        number: milestone.number,
+        name: milestone.name,
+        monthStart: milestone.monthStart,
+        monthEnd: milestone.monthEnd,
+        cashCents: milestone.cashCents,
+        marketplaceCents: milestone.marketplaceCents,
+        totalCents: milestone.totalCents,
+        evidenceRequired: [...milestone.evidenceRequired],
+        createdAt: now,
+      });
+    }
+
     return { lotId, planId };
   },
 });
 ```
 
-### 5.3 Local Evidence Registry
+### 5.4 Local Evidence Registry
 
 ```solidity
 // Path: packages/hardhat/contracts/EvidenceRegistry.sol
@@ -923,6 +1061,23 @@ The admin uses a demo control to fast-forward the milestone history. Convex crea
 
 The UI must label this as compressed demo time.
 
+The admin milestone page loads the active plan's six `milestones` rows, then creates one `demo_fixture` evidence record per milestone for the active partnership. Each fixture artifact should be a canonical JSON object containing:
+
+| Field | Meaning |
+| ----- | ------- |
+| `planCode` | `HVPLAN-ZAF-L02-2026` for the first demo lot. |
+| `lotCode` | `HV-HN-ZAF-L02`. |
+| `partnershipId` | Convex partnership ID for the signed partner position. |
+| `onchainPartnershipId` | Contract partnership ID used as the attestation `subjectId`. |
+| `milestoneNumber` | `1` through `6`. |
+| `evidenceKeys` | The `evidenceRequired` keys from the seeded milestone template. |
+| `completedAtDemoLabel` | Human-readable compressed timeline label, e.g. `Demo fast-forward: M3 completed`. |
+| `notes` | Short fixture summary shown in the admin and partner proof views. |
+
+The `artifactHash` stored in `evidenceRecords` is the hash of that canonical fixture JSON. The same hash is submitted to `EvidenceRegistry.attestEvidence` as `evidenceHash`.
+
+After all six milestone fixture evidence records for a partnership have `status: "attested"`, Convex may move the partnership from `active` to `milestones_attested`, then to `awaiting_settlement` when the admin closes the compressed milestone fixture. The state change is backend-owned; the client must not be able to mark milestones complete without the recorded and reconciled evidence rows.
+
 ### 8.2 Evidence Record Mutation
 
 ```typescript
@@ -983,13 +1138,13 @@ import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
 export function AttestEvidenceButton({
   sessionId,
-  evidenceRecordId,
+  partnershipId,
   evidenceHash,
   subjectId,
   milestoneNumber,
 }: {
   sessionId: string;
-  evidenceRecordId: string;
+  partnershipId: string;
   evidenceHash: `0x${string}`;
   subjectId: bigint;
   milestoneNumber: bigint;
@@ -1014,7 +1169,7 @@ export function AttestEvidenceButton({
         sessionId,
         txHash,
         txType: "evidence_attestation",
-        partnershipId: evidenceRecordId as never,
+        partnershipId: partnershipId as never,
       });
     }
   };
