@@ -235,16 +235,39 @@ Use **Context7 MCP** tools to fetch up-to-date documentation for any library (Wa
 
 IMPORTANT: Prefer retrieval-led reasoning over pre-trained knowledge. Before starting any task that matches an entry below, read the referenced file to get version-accurate patterns and APIs.
 
-**Skills** (read `.agents/skills/<name>/SKILL.md` before implementing):
+**Where skills are stored**
 
-- **openzeppelin** — OpenZeppelin Contracts integration, library-first development, pattern discovery from installed source. Use for any contract using OZ (tokens, access control, security primitives)
-- **erc-721** — NFT-specific pitfalls: `_safeMint` reentrancy, on-chain SVG stack-too-deep, marketplace metadata `attributes`, IPFS base URI trailing slash
-- **eip-5792** — batch transactions, wallet_sendCalls, paymaster, ERC-7677
-- **ponder** — blockchain event indexing, GraphQL APIs, onchain data queries
-- **siwe** — Sign-In with Ethereum, wallet authentication, SIWE sessions, EIP-4361
-- **x402** — HTTP 402 payment-gated routes, micropayments, API monetization, x402 protocol
-- **drizzle-neon** — Drizzle ORM, Neon PostgreSQL, database integration, off-chain storage
-- **subgraph** — The Graph subgraph integration, blockchain event indexing, GraphQL APIs
+- **Universal (this repo)**: `.agents/skills/<name>/SKILL.md` — versioned with the project; prefer this path when a skill exists here. Installed/locked third-party skills are recorded in `skills-lock.json` at the repo root.
+- **Claude Code**: `.claude/skills/<name>/SKILL.md` — same skill *names* may be mirrored for Claude. If a skill exists in both trees, use the **`.agents`** copy unless a tool only loads from `.claude`.
+
+**Skills — Scaffold-ETH, chains, and data**
+
+- **openzeppelin** — OpenZeppelin Contracts integration, library-first development, pattern discovery from installed source (tokens, access control, security primitives)
+- **erc-721** — NFT pitfalls: `_safeMint` reentrancy, on-chain SVG limits, metadata `attributes`, IPFS base URI trailing slash
+- **eip-5792** — batch transactions, `wallet_sendCalls`, paymaster, ERC-7677
+- **ponder** — Ponder event indexing, GraphQL, onchain queries
+- **subgraph** — The Graph subgraphs, event indexing, GraphQL
+- **siwe** — Sign-In with Ethereum, wallet auth, sessions, EIP-4361
+- **x402** — HTTP 402 payment-gated routes, micropayments, API monetization
+- **drizzle-neon** — Drizzle ORM, Neon PostgreSQL, off-chain storage
+- **blockchain-developer** — production Web3 app patterns: contracts, DeFi, NFTs, DAOs, integrations (broader than SE-2-only tasks)
+
+**Skills — Convex** (SKILL files here; for generated API rules use `convex/_generated/ai/guidelines.md` and the Convex note at the end of this file)
+
+- **convex** — routing: which Convex workflow or sub-skill applies; use when the task is “Convex work” but not yet specific
+- **convex-quickstart** — new Convex project or add Convex to an existing app, first deploy, provider wiring
+- **convex-setup-auth** — Convex Auth, Clerk, WorkOS, Auth0, identity mapping, protected functions
+- **convex-create-component** — `defineComponent`, isolated tables, app-facing wrappers, component boundaries
+- **convex-migration-helper** — schema/data migrations, widen-migrate-narrow, `@convex-dev/migrations`
+- **convex-performance-audit** — hot-path reads, write contention, subscription cost, function limits, OCC retries
+
+**Skills — Next.js, React, and UI**
+
+- **next-best-practices** — App Router file conventions, RSC boundaries, data patterns, async APIs, metadata, errors, route handlers, images/fonts, bundling
+- **vercel-composition-patterns** — composition over boolean prop sprawl, compound components, context, React 19 API notes
+- **vercel-react-best-practices** — React/Next performance: bundle, server/client, effects, rerenders, caching
+- **vercel-react-view-transitions** — `ViewTransition` / View Transitions API, route and shared-element style animations
+- **web-design-guidelines** — UI/UX and accessibility review against web interface heuristics
 
 **Agents** (in `.agents/agents/`):
 
