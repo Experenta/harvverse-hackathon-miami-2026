@@ -27,7 +27,7 @@ import {
 ## Dependencies
 
 ```bash
-yarn workspace @se-2/nextjs add iron-session
+pnpm --filter @se-2/nextjs add iron-session
 ```
 
 ## Gotchas

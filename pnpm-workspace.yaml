@@ -1,0 +1,14 @@
+packages:
+  - "packages/*"
+
+# Native modules whose install scripts SE-2 needs to run
+# (pnpm 10 disables postinstall scripts by default for security)
+onlyBuiltDependencies:
+  - bufferutil
+  - esbuild
+  - keccak
+  - protobufjs
+  - secp256k1
+  - sharp
+  - unrs-resolver
+  - utf-8-validate

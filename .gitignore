@@ -1,13 +1,9 @@
 # dependencies
 node_modules
 
-# yarn
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
+# pnpm
+.pnpm-store
+.pnpm-debug.log*
 
 # eslint
 .eslintcache
@@ -21,3 +17,5 @@ node_modules
 
 # cli
 dist
+
+.env.local

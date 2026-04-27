@@ -26,30 +26,30 @@ Commands work the same for both flavors unless noted otherwise:
 
 ```bash
 # Development workflow (run each in separate terminal)
-yarn chain          # Start local blockchain (Hardhat or Anvil)
-yarn deploy         # Deploy contracts to local network
-yarn start          # Start Next.js frontend at http://localhost:3000
+pnpm chain          # Start local blockchain (Hardhat or Anvil)
+pnpm contracts:deploy # Deploy contracts to local network
+pnpm start          # Start Next.js frontend at http://localhost:3000
 
 # Code quality
-yarn lint           # Lint both packages
-yarn format         # Format both packages
+pnpm lint           # Lint both packages
+pnpm format         # Format both packages
 
 # Building
-yarn next:build     # Build frontend
-yarn compile        # Compile Solidity contracts
+pnpm next:build     # Build frontend
+pnpm compile        # Compile Solidity contracts
 
 # Contract verification (works for both)
-yarn verify --network <network>
+pnpm verify --network <network>
 
 # Account management (works for both)
-yarn generate            # Generate new deployer account
-yarn account:import      # Import existing private key
-yarn account             # View current account info
+pnpm generate            # Generate new deployer account
+pnpm account:import      # Import existing private key
+pnpm account             # View current account info
 
 # Deploy to live network
-yarn deploy --network <network>   # e.g., sepolia, mainnet, base
+pnpm contracts:deploy --network <network>   # e.g., sepolia, mainnet, base
 
-yarn vercel:yolo --prod # for deployment of frontend
+pnpm vercel:yolo --prod # for deployment of frontend
 ```
 
 ## Architecture
@@ -68,7 +68,7 @@ yarn vercel:yolo --prod # for deployment of frontend
     // In packages/hardhat/deploy/01_deploy_my_contract.ts
     deployMyContract.tags = ["MyContract"];
     ```
-  - `yarn deploy --tags MyContract`
+  - `pnpm contracts:deploy --tags MyContract`
   - **Gas limit in deploy scripts**: Manual post-deploy calls (e.g. `transferOwnership`, `grantRole`, `initialize`) can silently inherit `blockGasLimit` as their gas cap, causing failures. **Fix at the call site, not in `hardhat.config.ts`:**
     ```typescript
     // Preferred: estimateGas + 20% margin
@@ -87,11 +87,11 @@ yarn vercel:yolo --prod # for deployment of frontend
 - Tests: `packages/foundry/test/`
 - Config: `packages/foundry/foundry.toml`
 - Deploying a specific contract:
-  - Create a separate deployment script and run `yarn deploy --file DeployYourContract.s.sol`
+  - Create a separate deployment script and run `pnpm contracts:deploy --file DeployYourContract.s.sol`
 
 #### Both Flavors
 
-- After `yarn deploy`, ABIs are auto-generated to `packages/nextjs/contracts/deployedContracts.ts`
+- After `pnpm contracts:deploy`, ABIs are auto-generated to `packages/nextjs/contracts/deployedContracts.ts`
 
 ### Frontend Contract Interaction
 
@@ -249,3 +249,11 @@ IMPORTANT: Prefer retrieval-led reasoning over pre-trained knowledge. Before sta
 **Agents** (in `.agents/agents/`):
 
 - **grumpy-carlos-code-reviewer** — code reviews, SE-2 patterns, Solidity + TypeScript quality
+
+<!-- convex-ai-start -->
+This project uses [Convex](https://convex.dev) as its backend.
+
+When working on Convex code, **always read `convex/_generated/ai/guidelines.md` first** for important guidelines on how to correctly use Convex APIs and patterns. The file contains rules that override what you may have learned about Convex from training data.
+
+Convex agent skills for common tasks can be installed by running `npx convex ai-files install`.
+<!-- convex-ai-end -->
