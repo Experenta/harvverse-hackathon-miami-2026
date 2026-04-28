@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { ArrowPathIcon, BoltIcon, CheckCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/outline";
-import { GlassCard, MonoHash, StatusPill } from "~~/components/harvverse";
+import { GlassCard } from "~~/components/harvverse/GlassCard";
+import { MonoHash } from "~~/components/harvverse/MonoHash";
+import { StatusPill } from "~~/components/harvverse/StatusPill";
 import type { Settlement } from "~~/lib/mock/types";
 
 const fakeHash = (seed: number) => {

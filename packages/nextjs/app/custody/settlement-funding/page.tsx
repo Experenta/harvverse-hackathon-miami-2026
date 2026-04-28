@@ -1,5 +1,9 @@
 import { FundActions } from "./FundActions";
-import { GlassCard, MetricCard, MonoHash, Section, StatusPill } from "~~/components/harvverse";
+import { GlassCard } from "~~/components/harvverse/GlassCard";
+import { MetricCard } from "~~/components/harvverse/MetricCard";
+import { MonoHash } from "~~/components/harvverse/MonoHash";
+import { Section } from "~~/components/harvverse/Section";
+import { StatusPill } from "~~/components/harvverse/StatusPill";
 import { getLotByCode } from "~~/lib/mock/lots";
 import { getPartnershipById } from "~~/lib/mock/partnerships";
 // TODO(phase6B): replace with useQuery(api.admin.settlements.getActiveSettlementIntent) + useScaffoldReadContract

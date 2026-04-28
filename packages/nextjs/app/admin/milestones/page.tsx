@@ -3,7 +3,9 @@
 import { useMemo, useState } from "react";
 import { MilestoneActions } from "./MilestoneActions";
 import { ChevronDownIcon, ClockIcon } from "@heroicons/react/24/outline";
-import { GlassCard, MetricCard, Section } from "~~/components/harvverse";
+import { GlassCard } from "~~/components/harvverse/GlassCard";
+import { MetricCard } from "~~/components/harvverse/MetricCard";
+import { Section } from "~~/components/harvverse/Section";
 // TODO(phase5C/5D): replace mock helpers with api.evidence.fixtures + api.partner.partnerships
 import { buildMilestoneRows, milestoneTemplates } from "~~/lib/mock/evidence";
 import { getLotByCode } from "~~/lib/mock/lots";

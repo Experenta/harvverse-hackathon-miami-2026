@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ParticleField } from "./ParticleField";
+import dynamic from "next/dynamic";
+
+const ParticleField = dynamic(() => import("./ParticleField").then(module => module.ParticleField), {
+  ssr: false,
+  loading: () => null,
+});
 
 export const HeroParticleField = () => {
   const [enabled, setEnabled] = useState(false);

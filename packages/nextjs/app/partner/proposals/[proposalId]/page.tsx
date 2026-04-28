@@ -1,14 +1,12 @@
 import { notFound } from "next/navigation";
 import { ProposalCTA } from "./ProposalCTA";
-import {
-  AIExplanationCard,
-  GlassCard,
-  MetricCard,
-  MonoHash,
-  Section,
-  StatusPill,
-  WalletPillMock,
-} from "~~/components/harvverse";
+import { AIExplanationCard } from "~~/components/harvverse/AIExplanationCard";
+import { GlassCard } from "~~/components/harvverse/GlassCard";
+import { MetricCard } from "~~/components/harvverse/MetricCard";
+import { MonoHash } from "~~/components/harvverse/MonoHash";
+import { Section } from "~~/components/harvverse/Section";
+import { StatusPill } from "~~/components/harvverse/StatusPill";
+import { WalletPillMock } from "~~/components/harvverse/WalletPillMock";
 import { getLotByCode } from "~~/lib/mock/lots";
 import { getPlanByCode } from "~~/lib/mock/plans";
 // TODO(phase3D/4B): replace with useQuery(api.partner.proposals.getMyProposal)

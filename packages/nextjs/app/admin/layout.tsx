@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
-import { GridBackdrop } from "~~/components/harvverse";
+import { GridBackdrop } from "~~/components/harvverse/GridBackdrop";
 
 const ADMIN_LINKS: { href: string; label: string }[] = [
   { href: "/admin", label: "Overview" },

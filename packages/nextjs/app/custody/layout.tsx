@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ShieldCheckIcon } from "@heroicons/react/24/outline";
-import { GridBackdrop } from "~~/components/harvverse";
+import { GridBackdrop } from "~~/components/harvverse/GridBackdrop";
 
 const CUSTODY_LINKS: { href: string; label: string }[] = [
   { href: "/custody/settlement-funding", label: "Settlement funding" },

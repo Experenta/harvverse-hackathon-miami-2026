@@ -8,7 +8,8 @@ import {
   HandRaisedIcon,
   WalletIcon,
 } from "@heroicons/react/24/outline";
-import { GlassCard, StatusPill } from "~~/components/harvverse";
+import { GlassCard } from "~~/components/harvverse/GlassCard";
+import { StatusPill } from "~~/components/harvverse/StatusPill";
 import type { Proposal } from "~~/lib/mock/types";
 
 type Step = "approve" | "open" | "done";

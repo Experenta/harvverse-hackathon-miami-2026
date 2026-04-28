@@ -7,15 +7,13 @@ import {
   ExclamationTriangleIcon,
   ScaleIcon,
 } from "@heroicons/react/24/outline";
-import {
-  GlassCard,
-  LotMapPreview,
-  MetricCard,
-  MonoHash,
-  Section,
-  StatusPill,
-  WalletPillMock,
-} from "~~/components/harvverse";
+import { GlassCard } from "~~/components/harvverse/GlassCard";
+import { LotMapPreview } from "~~/components/harvverse/LotMapPreview";
+import { MetricCard } from "~~/components/harvverse/MetricCard";
+import { MonoHash } from "~~/components/harvverse/MonoHash";
+import { Section } from "~~/components/harvverse/Section";
+import { StatusPill } from "~~/components/harvverse/StatusPill";
+import { WalletPillMock } from "~~/components/harvverse/WalletPillMock";
 // TODO(phase3D): replace with useQuery(api.partner.lots.getByCode)
 import { getLotByCode } from "~~/lib/mock/lots";
 import { getPlanForLot } from "~~/lib/mock/plans";

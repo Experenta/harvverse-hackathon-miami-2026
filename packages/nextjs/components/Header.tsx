@@ -6,7 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { hardhat } from "viem/chains";
 import { Bars3Icon, BugAntIcon } from "@heroicons/react/24/outline";
-import { HarvverseLogo } from "~~/components/harvverse";
+import { HarvverseLogo } from "~~/components/harvverse/HarvverseLogo";
 import { useOutsideClick, useTargetNetwork } from "~~/hooks/scaffold-eth";
 
 const RoleSwitcher = dynamic(() => import("~~/components/harvverse/RoleSwitcher").then(module => module.RoleSwitcher), {

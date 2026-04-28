@@ -1,6 +1,11 @@
 import Link from "next/link";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
-import { GlassCard, MetricCard, MonoHash, Section, StatusPill, WalletPillMock } from "~~/components/harvverse";
+import { GlassCard } from "~~/components/harvverse/GlassCard";
+import { MetricCard } from "~~/components/harvverse/MetricCard";
+import { MonoHash } from "~~/components/harvverse/MonoHash";
+import { Section } from "~~/components/harvverse/Section";
+import { StatusPill } from "~~/components/harvverse/StatusPill";
+import { WalletPillMock } from "~~/components/harvverse/WalletPillMock";
 import { mockEvidence } from "~~/lib/mock/evidence";
 import { getLotByCode } from "~~/lib/mock/lots";
 import { listPartnerships } from "~~/lib/mock/partnerships";

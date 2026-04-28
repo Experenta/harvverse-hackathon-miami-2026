@@ -1,45 +1,59 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Address, createPublicClient, http, toHex } from "viem";
-import { hardhat } from "viem/chains";
+import { Address, toHex } from "viem";
+import { usePublicClient } from "wagmi";
 
-const publicClient = createPublicClient({
-  chain: hardhat,
-  transport: http(),
-});
+const MAX_STORAGE_SLOTS = 256;
+const EMPTY_SLOT_BREAK_STREAK = 8;
 
 export const AddressStorageTab = ({ address }: { address: Address }) => {
   const [storage, setStorage] = useState<string[]>([]);
+  const publicClient = usePublicClient();
 
   useEffect(() => {
+    if (!publicClient) return;
+
+    let cancelled = false;
+
     const fetchStorage = async () => {
       try {
         const storageData = [];
+        let emptyStreak = 0;
         let idx = 0;
 
-        while (true) {
+        while (idx < MAX_STORAGE_SLOTS) {
           const storageAtPosition = await publicClient.getStorageAt({
             address: address,
             slot: toHex(idx),
           });
 
-          if (storageAtPosition === "0x" + "0".repeat(64)) break;
+          if (storageAtPosition === "0x" + "0".repeat(64)) {
+            emptyStreak += 1;
+            if (emptyStreak >= EMPTY_SLOT_BREAK_STREAK) break;
+            idx++;
+            continue;
+          }
 
           if (storageAtPosition) {
             storageData.push(storageAtPosition);
+            emptyStreak = 0;
           }
 
           idx++;
         }
-        setStorage(storageData);
+
+        if (!cancelled) setStorage(storageData);
       } catch (error) {
-        console.error("Failed to fetch storage:", error);
+        if (!cancelled) console.debug("Storage lookup transient error:", error);
       }
     };
 
     fetchStorage();
-  }, [address]);
+    return () => {
+      cancelled = true;
+    };
+  }, [address, publicClient]);
 
   return (
     <div className="flex flex-col gap-3 p-4">

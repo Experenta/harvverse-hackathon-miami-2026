@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { GridBackdrop } from "~~/components/harvverse";
+import { GridBackdrop } from "~~/components/harvverse/GridBackdrop";
 
 const PARTNER_LINKS: { href: string; label: string }[] = [
   { href: "/partner/lots", label: "Lots" },

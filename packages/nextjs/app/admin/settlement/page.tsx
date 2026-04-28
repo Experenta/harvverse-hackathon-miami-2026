@@ -1,13 +1,11 @@
 import { SettleActions } from "./SettleActions";
-import {
-  GlassCard,
-  MetricCard,
-  MonoHash,
-  Section,
-  SettlementProofPanel,
-  StatusPill,
-  WalletPillMock,
-} from "~~/components/harvverse";
+import { GlassCard } from "~~/components/harvverse/GlassCard";
+import { MetricCard } from "~~/components/harvverse/MetricCard";
+import { MonoHash } from "~~/components/harvverse/MonoHash";
+import { Section } from "~~/components/harvverse/Section";
+import { SettlementProofPanel } from "~~/components/harvverse/SettlementProofPanel";
+import { StatusPill } from "~~/components/harvverse/StatusPill";
+import { WalletPillMock } from "~~/components/harvverse/WalletPillMock";
 import { getLotByCode } from "~~/lib/mock/lots";
 import { getPartnershipById } from "~~/lib/mock/partnerships";
 import { getPlanByCode } from "~~/lib/mock/plans";

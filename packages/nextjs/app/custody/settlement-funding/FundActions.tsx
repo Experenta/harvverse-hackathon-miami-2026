@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { ArrowPathIcon, BanknotesIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
-import { GlassCard, MonoHash, StatusPill } from "~~/components/harvverse";
+import { GlassCard } from "~~/components/harvverse/GlassCard";
+import { MonoHash } from "~~/components/harvverse/MonoHash";
+import { StatusPill } from "~~/components/harvverse/StatusPill";
 
 const fakeHash = (seed: number) => {
   const hex = "0123456789abcdef";

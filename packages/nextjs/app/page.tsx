@@ -1,17 +1,15 @@
 import Link from "next/link";
 import { ArrowRightIcon, BeakerIcon, CheckBadgeIcon, CubeTransparentIcon, EyeIcon } from "@heroicons/react/24/outline";
-import {
-  CoffeeBeanArt,
-  GlassCard,
-  GridBackdrop,
-  HeroParticleField,
-  LotCard,
-  MetricCard,
-  ProofTimeline,
-  Section,
-  SettlementProofPanel,
-  TopographicLines,
-} from "~~/components/harvverse";
+import { CoffeeBeanArt } from "~~/components/harvverse/CoffeeBeanArt";
+import { GlassCard } from "~~/components/harvverse/GlassCard";
+import { GridBackdrop } from "~~/components/harvverse/GridBackdrop";
+import { HeroParticleField } from "~~/components/harvverse/HeroParticleField";
+import { LotCard } from "~~/components/harvverse/LotCard";
+import { MetricCard } from "~~/components/harvverse/MetricCard";
+import { ProofTimeline } from "~~/components/harvverse/ProofTimeline";
+import { Section } from "~~/components/harvverse/Section";
+import { SettlementProofPanel } from "~~/components/harvverse/SettlementProofPanel";
+import { TopographicLines } from "~~/components/harvverse/TopographicLines";
 // TODO(phase3D): replace mock imports with useQuery(api.partner.lots.*) when integrating
 import { getActiveLot, listLots } from "~~/lib/mock/lots";
 import { getPlanByCode, getPlanForLot } from "~~/lib/mock/plans";
@@ -101,7 +99,12 @@ const Home = () => {
               />
               <MetricCard
                 label="Origin"
-                value={<span className="inline-block whitespace-nowrap">Central America</span>}
+                value={
+                  <span className="inline-flex flex-col items-center px-2 text-[0.78em] leading-tight">
+                    <span>Central</span>
+                    <span>America</span>
+                  </span>
+                }
                 tone="muted"
                 align="center"
                 className="min-h-[160px]"
@@ -117,11 +120,16 @@ const Home = () => {
               />
               <MetricCard
                 label="Chain"
-                value={<span className="inline-block whitespace-nowrap">Hardhat</span>}
+                value={
+                  <span className="inline-flex flex-col items-center px-2 text-[0.78em] leading-tight">
+                    <span>Hard</span>
+                    <span>hat</span>
+                  </span>
+                }
                 tone="gold"
                 align="center"
                 className="min-h-[160px]"
-                valueClassName="text-[clamp(1.4rem,1.9vw,2rem)]"
+                valueClassName="text-[clamp(1.2rem,1.6vw,1.8rem)]"
               />
             </div>
           </div>

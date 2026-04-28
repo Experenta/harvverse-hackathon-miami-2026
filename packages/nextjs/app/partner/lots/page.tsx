@@ -1,4 +1,5 @@
-import { LotCard, Section } from "~~/components/harvverse";
+import { LotCard } from "~~/components/harvverse/LotCard";
+import { Section } from "~~/components/harvverse/Section";
 // TODO(phase3D): replace with useQuery(api.partner.lots.listPublishedLots)
 import { listLots } from "~~/lib/mock/lots";
 import { getPlanByCode } from "~~/lib/mock/plans";
