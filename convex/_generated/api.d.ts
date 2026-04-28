@@ -8,13 +8,23 @@
  * @module
  */
 
+import type * as http from "../http.js";
+import type * as sensor_http from "../sensor/http.js";
+import type * as sensor_queries from "../sensor/queries.js";
+import type * as sensor_seed from "../sensor/seed.js";
+
 import type {
   ApiFromModules,
   FilterApi,
   FunctionReference,
 } from "convex/server";
 
-declare const fullApi: ApiFromModules<{}>;
+declare const fullApi: ApiFromModules<{
+  http: typeof http;
+  "sensor/http": typeof sensor_http;
+  "sensor/queries": typeof sensor_queries;
+  "sensor/seed": typeof sensor_seed;
+}>;
 
 /**
  * A utility for referencing Convex functions in your app's public API.
