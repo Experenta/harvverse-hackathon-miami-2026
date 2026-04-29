@@ -1,26 +1,80 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { RainbowKitProvider, darkTheme, lightTheme } from "@rainbow-me/rainbowkit";
+import { useEffect } from "react";
+import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
-import { useTheme } from "next-themes";
 import { Toaster } from "react-hot-toast";
 import { WagmiProvider } from "wagmi";
 import { Footer } from "~~/components/Footer";
 import { Header } from "~~/components/Header";
 import { BlockieAvatar } from "~~/components/scaffold-eth";
 import { wagmiConfig } from "~~/services/web3/wagmiConfig";
+import { notification } from "~~/utils/scaffold-eth";
 
 const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
+  useEffect(() => {
+    let hasNotifiedLocalRpcDown = false;
+
+    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+      const reason = event.reason;
+      let reasonText = "";
+      if (typeof reason === "string") {
+        reasonText = reason;
+      } else {
+        try {
+          reasonText = JSON.stringify(reason);
+        } catch {
+          reasonText = String(reason);
+        }
+      }
+      const fullText = `${reasonText} ${reason?.message ?? ""}`.toLowerCase();
+      const isLocalRpcFetchError =
+        fullText.includes("failed to fetch") &&
+        (fullText.includes("127.0.0.1:8545") || fullText.includes("localhost:8545"));
+
+      if (!isLocalRpcFetchError) {
+        return;
+      }
+
+      event.preventDefault();
+
+      if (hasNotifiedLocalRpcDown) {
+        return;
+      }
+
+      hasNotifiedLocalRpcDown = true;
+      notification.error(
+        <>
+          <p className="font-bold mt-0 mb-1">No se pudo conectar al nodo local</p>
+          <p className="m-0">
+            Inicia la blockchain local con <code className="italic bg-base-300 text-base font-bold">pnpm chain</code>.
+          </p>
+        </>,
+      );
+    };
+
+    window.addEventListener("unhandledrejection", handleUnhandledRejection);
+    return () => window.removeEventListener("unhandledrejection", handleUnhandledRejection);
+  }, []);
+
   return (
     <>
-      <div className={`flex flex-col min-h-screen `}>
+      <div className="flex flex-col min-h-screen">
         <Header />
         <main className="relative flex flex-col flex-1">{children}</main>
         <Footer />
       </div>
-      <Toaster />
+      <Toaster
+        toastOptions={{
+          style: {
+            background: "#0a1815",
+            color: "#f5f7f6",
+            border: "1px solid rgba(127, 255, 212, 0.18)",
+            fontFamily: "var(--font-geist-sans)",
+          },
+        }}
+      />
     </>
   );
 };
@@ -33,23 +87,20 @@ export const queryClient = new QueryClient({
   },
 });
 
+const harvverseRainbowTheme = darkTheme({
+  accentColor: "#22a06b",
+  accentColorForeground: "#061310",
+  borderRadius: "small",
+  fontStack: "system",
+  overlayBlur: "small",
+});
+
 export const ScaffoldEthAppWithProviders = ({ children }: { children: React.ReactNode }) => {
-  const { resolvedTheme } = useTheme();
-  const isDarkMode = resolvedTheme === "dark";
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider
-          avatar={BlockieAvatar}
-          theme={mounted ? (isDarkMode ? darkTheme() : lightTheme()) : lightTheme()}
-        >
-          <ProgressBar height="3px" color="#2299dd" />
+        <RainbowKitProvider avatar={BlockieAvatar} theme={harvverseRainbowTheme}>
+          <ProgressBar height="2px" color="#7fffd4" />
           <ScaffoldEthApp>{children}</ScaffoldEthApp>
         </RainbowKitProvider>
       </QueryClientProvider>

@@ -1,95 +1,83 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
-
-@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+@custom-variant dark (&:where([data-theme=harvverse], [data-theme=harvverse] *));
 
 @theme {
   --shadow-center: 0 0 12px -2px rgb(0 0 0 / 0.05);
   --animate-pulse-fast: pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-drift: drift 32s linear infinite;
+  --animate-pulse-glow: pulseGlow 4s ease-in-out infinite;
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --color-harv-bg: #081412;
+  --color-harv-primary: #0e5e4b;
+  --color-harv-secondary: #22a06b;
+  --color-harv-accent: #c8a96b;
+  --color-harv-mint: #7fffd4;
+  --color-harv-text: #f5f7f6;
+  --color-harv-muted: #9fb5ad;
 }
 
 @plugin "daisyui" {
-  themes:
-    light,
-    dark --prefersdark;
+  themes: harvverse --default --prefersdark;
 }
 
 @plugin "daisyui/theme" {
-  name: "light";
+  name: "harvverse";
 
-  --color-primary: #93bbfb;
-  --color-primary-content: #212638;
-  --color-secondary: #dae8ff;
-  --color-secondary-content: #212638;
-  --color-accent: #93bbfb;
-  --color-accent-content: #212638;
-  --color-neutral: #212638;
-  --color-neutral-content: #ffffff;
-  --color-base-100: #ffffff;
-  --color-base-200: #f4f8ff;
-  --color-base-300: #dae8ff;
-  --color-base-content: #212638;
-  --color-info: #93bbfb;
+  --color-primary: #22a06b;
+  --color-primary-content: #061310;
+  --color-secondary: #0e5e4b;
+  --color-secondary-content: #f5f7f6;
+  --color-accent: #c8a96b;
+  --color-accent-content: #1a130a;
+  --color-neutral: #0d1f1b;
+  --color-neutral-content: #f5f7f6;
+  --color-base-100: #0a1815;
+  --color-base-200: #081412;
+  --color-base-300: #050d0c;
+  --color-base-content: #f5f7f6;
+  --color-info: #7fffd4;
+  --color-info-content: #06120e;
   --color-success: #34eeb6;
-  --color-warning: #ffcf72;
+  --color-success-content: #06120e;
+  --color-warning: #c8a96b;
+  --color-warning-content: #1a130a;
   --color-error: #ff8863;
+  --color-error-content: #1c0a06;
 
-  --radius-field: 1rem;
-  --radius-box: 1rem;
+  --radius-field: 0.5rem;
+  --radius-box: 0.75rem;
   --tt-tailw: 6px;
+  --tt-bg: #050d0c;
 }
 
-@plugin "daisyui/theme" {
-  name: "dark";
-
-  --color-primary: #212638;
-  --color-primary-content: #f9fbff;
-  --color-secondary: #323f61;
-  --color-secondary-content: #f9fbff;
-  --color-accent: #4969a6;
-  --color-accent-content: #f9fbff;
-  --color-neutral: #f9fbff;
-  --color-neutral-content: #385183;
-  --color-base-100: #385183;
-  --color-base-200: #2a3655;
-  --color-base-300: #212638;
-  --color-base-content: #f9fbff;
-  --color-info: #385183;
-  --color-success: #34eeb6;
-  --color-warning: #ffcf72;
-  --color-error: #ff8863;
-
-  --radius-field: 1rem;
-  --radius-box: 1rem;
-
-  --tt-tailw: 6px;
-  --tt-bg: var(--color-primary);
-}
-
-/*
-  The default border color has changed to `currentColor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
 @layer base {
   *,
   ::after,
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentColor);
+    border-color: color-mix(in oklab, var(--color-harv-text) 8%, transparent);
   }
 
-  p {
-    margin: 1rem 0;
+  html,
+  body {
+    background-color: var(--color-harv-bg);
+    color: var(--color-harv-text);
+    min-height: 100vh;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
   }
 
   body {
-    min-height: 100vh;
+    background-image:
+      radial-gradient(900px 600px at -10% -20%, color-mix(in oklab, #0e5e4b 18%, transparent), transparent 60%),
+      radial-gradient(800px 500px at 110% 10%, color-mix(in oklab, #22a06b 10%, transparent), transparent 60%),
+      radial-gradient(1200px 800px at 50% 120%, color-mix(in oklab, #c8a96b 6%, transparent), transparent 70%);
+    background-attachment: fixed;
   }
 
   h1,
@@ -97,28 +85,213 @@
   h3,
   h4 {
     margin-bottom: 0.5rem;
-    line-height: 1;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+  }
+
+  p {
+    margin: 0.75rem 0;
+  }
+
+  ::selection {
+    background-color: color-mix(in oklab, var(--color-harv-mint) 35%, transparent);
+    color: var(--color-harv-bg);
   }
 }
 
 :root,
-[data-theme] {
-  background: var(--color-base-200);
+[data-theme="harvverse"] {
+  color-scheme: dark;
+  --harv-grid: color-mix(in oklab, var(--color-harv-text) 6%, transparent);
+  --harv-grid-strong: color-mix(in oklab, var(--color-harv-mint) 12%, transparent);
+}
+
+.glass {
+  background-color: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(8px) saturate(115%);
+  -webkit-backdrop-filter: blur(8px) saturate(115%);
+  border: 1px solid color-mix(in oklab, var(--color-harv-text) 8%, transparent);
+  border-radius: 0.875rem;
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--color-harv-text) 10%, transparent),
+    0 12px 40px -16px rgba(0, 0, 0, 0.6);
+}
+
+.glass-strong {
+  background-color: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px) saturate(120%);
+  -webkit-backdrop-filter: blur(12px) saturate(120%);
+  border: 1px solid color-mix(in oklab, var(--color-harv-mint) 14%, transparent);
+  border-radius: 0.875rem;
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--color-harv-mint) 18%, transparent),
+    0 24px 60px -24px rgba(0, 0, 0, 0.8);
+}
+
+.grid-overlay {
+  background-image:
+    linear-gradient(to right, var(--harv-grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--harv-grid) 1px, transparent 1px);
+  background-size: 56px 56px;
+  background-position: -1px -1px;
+  mask-image: radial-gradient(circle at 50% 30%, black 0%, transparent 75%);
+  -webkit-mask-image: radial-gradient(circle at 50% 30%, black 0%, transparent 75%);
+}
+
+.grid-overlay-dense {
+  background-image:
+    linear-gradient(to right, var(--harv-grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--harv-grid) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(circle at 30% 30%, black 0%, transparent 80%);
+  -webkit-mask-image: radial-gradient(circle at 30% 30%, black 0%, transparent 80%);
+}
+
+.scanline::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 2px,
+    color-mix(in oklab, var(--color-harv-text) 3%, transparent) 3px
+  );
+  mix-blend-mode: screen;
+  opacity: 0.4;
+}
+
+.mono-hash {
+  font-family: var(--font-mono);
+  font-feature-settings: "ss01", "tnum";
+  letter-spacing: -0.005em;
+  word-break: break-all;
+}
+
+.text-muted-harv {
+  color: var(--color-harv-muted);
+}
+
+.shadow-glow {
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--color-harv-mint) 18%, transparent),
+    0 0 24px -4px color-mix(in oklab, var(--color-harv-mint) 30%, transparent);
+}
+
+.shadow-glow-gold {
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--color-harv-accent) 25%, transparent),
+    0 0 30px -6px color-mix(in oklab, var(--color-harv-accent) 35%, transparent);
+}
+
+.text-gradient-harv {
+  background: linear-gradient(
+    135deg,
+    var(--color-harv-text) 0%,
+    var(--color-harv-mint) 60%,
+    var(--color-harv-accent) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-harv-muted);
+}
+
+.divider-harv {
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(
+    to right,
+    transparent,
+    color-mix(in oklab, var(--color-harv-text) 14%, transparent) 50%,
+    transparent
+  );
 }
 
 .btn {
-  @apply shadow-md;
-  border-radius: 9999rem;
+  border-radius: 0.625rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  text-transform: none;
+}
+
+.btn.btn-primary {
+  background: linear-gradient(135deg, #22a06b 0%, #0e5e4b 100%);
+  border-color: color-mix(in oklab, var(--color-harv-mint) 18%, transparent);
+  color: #061310;
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--color-harv-mint) 25%, transparent),
+    0 8px 28px -10px color-mix(in oklab, #22a06b 60%, transparent);
+}
+
+.btn.btn-primary:hover {
+  filter: brightness(1.06);
 }
 
 .btn.btn-ghost {
-  @apply shadow-none;
+  box-shadow: none;
+  background-color: transparent;
+}
+
+.btn.btn-ghost:hover {
+  background-color: color-mix(in oklab, var(--color-harv-text) 6%, transparent);
 }
 
 .link {
-  text-underline-offset: 2px;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in oklab, var(--color-harv-mint) 60%, transparent);
 }
 
 .link:hover {
   opacity: 80%;
+}
+
+@keyframes drift {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-56px, -56px, 0);
+  }
+}
+
+@keyframes pulseGlow {
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -10px, 0);
+  }
+}
+
+.animate-float-slow {
+  animation: float-slow 9s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-drift,
+  .animate-pulse-glow,
+  .animate-float-slow,
+  .animate-pulse-fast {
+    animation: none !important;
+  }
 }

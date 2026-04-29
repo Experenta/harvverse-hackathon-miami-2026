@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { isAddress, isHex } from "viem";
+import { Hash, isAddress } from "viem";
 import { hardhat } from "viem/chains";
 import { usePublicClient } from "wagmi";
 
@@ -11,23 +11,26 @@ export const SearchBar = () => {
   const router = useRouter();
 
   const client = usePublicClient({ chainId: hardhat.id });
+  const normalizedSearch = searchInput.trim();
+  const isTxHash = /^0x[a-fA-F0-9]{64}$/.test(normalizedSearch);
 
   const handleSearch = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (isHex(searchInput)) {
+    if (isTxHash) {
       try {
-        const tx = await client?.getTransaction({ hash: searchInput });
+        const txHash = normalizedSearch as Hash;
+        const tx = await client?.getTransaction({ hash: txHash });
         if (tx) {
-          router.push(`/blockexplorer/transaction/${searchInput}`);
+          router.push(`/blockexplorer/transaction/${txHash}`);
           return;
         }
       } catch (error) {
-        console.error("Failed to fetch transaction:", error);
+        console.debug("Transaction lookup transient error:", error);
       }
     }
 
-    if (isAddress(searchInput)) {
-      router.push(`/blockexplorer/address/${searchInput}`);
+    if (isAddress(normalizedSearch)) {
+      router.push(`/blockexplorer/address/${normalizedSearch}`);
       return;
     }
   };
