@@ -3,8 +3,12 @@ type TopographicLinesProps = {
   intensity?: "subtle" | "normal" | "bold";
 };
 
+/**
+ * TopographicLines — flowing contour line backdrop. Now drawn in the
+ * leaf-and-honey palette and faded toward the corners.
+ */
 export const TopographicLines = ({ className, intensity = "normal" }: TopographicLinesProps) => {
-  const opacity = intensity === "subtle" ? 0.18 : intensity === "bold" ? 0.45 : 0.28;
+  const opacity = intensity === "subtle" ? 0.18 : intensity === "bold" ? 0.5 : 0.32;
 
   return (
     <svg
@@ -15,9 +19,9 @@ export const TopographicLines = ({ className, intensity = "normal" }: Topographi
     >
       <defs>
         <linearGradient id="topoStroke" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#7fffd4" stopOpacity="0.7" />
-          <stop offset="55%" stopColor="#22a06b" stopOpacity="0.45" />
-          <stop offset="100%" stopColor="#c8a96b" stopOpacity="0.35" />
+          <stop offset="0%" stopColor="#9bc26c" stopOpacity="0.7" />
+          <stop offset="55%" stopColor="#5e8c3f" stopOpacity="0.45" />
+          <stop offset="100%" stopColor="#e0b87a" stopOpacity="0.4" />
         </linearGradient>
         <radialGradient id="topoFade" cx="40%" cy="35%" r="70%">
           <stop offset="0%" stopColor="#000" stopOpacity="0" />
@@ -40,10 +44,10 @@ export const TopographicLines = ({ className, intensity = "normal" }: Topographi
         <path d="M-50 220 C 160 180, 320 300, 560 240 S 940 170, 1260 250" strokeWidth="0.6" />
         <path d="M-50 180 C 140 140, 300 260, 540 200 S 920 140, 1260 210" strokeWidth="0.5" />
       </g>
-      <g fill="none" stroke="#7fffd4" strokeOpacity="0.18" strokeWidth="0.5" mask="url(#topoMask)">
-        <circle cx="280" cy="380" r="6" fill="#7fffd4" fillOpacity="0.5" stroke="none" />
-        <circle cx="720" cy="320" r="4" fill="#c8a96b" fillOpacity="0.55" stroke="none" />
-        <circle cx="980" cy="440" r="5" fill="#22a06b" fillOpacity="0.6" stroke="none" />
+      <g fill="none" mask="url(#topoMask)">
+        <circle cx="280" cy="380" r="6" fill="#9bc26c" fillOpacity="0.5" />
+        <circle cx="720" cy="320" r="4" fill="#e0b87a" fillOpacity="0.55" />
+        <circle cx="980" cy="440" r="5" fill="#5fffaa" fillOpacity="0.6" />
       </g>
     </svg>
   );

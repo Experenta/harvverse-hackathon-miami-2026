@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { GlassCard } from "./GlassCard";
 import { LotMapPreview } from "./LotMapPreview";
+import { Panel } from "./Panel";
 import { StatusPill } from "./StatusPill";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import type { Lot, Plan } from "~~/lib/mock/types";
@@ -15,71 +15,83 @@ type LotCardProps = {
 const formatCurrency = (cents: number) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(cents / 100);
 
+/**
+ * LotCard — catalog card for a coffee lot.
+ * Map preview lives in a sharp panel; lot facts arranged as a tight grid.
+ */
 export const LotCard = ({ lot, plan, layout = "default", className }: LotCardProps) => {
   const isFeature = layout === "feature";
+  const isAvailable = lot.status === "available";
 
   return (
-    <GlassCard padding="none" className={`overflow-hidden ${className ?? ""}`}>
+    <Panel
+      padding="none"
+      variant={isFeature ? "elevated" : "default"}
+      className={`group overflow-hidden transition hover:border-leaf/50 ${className ?? ""}`}
+    >
       <div className={`grid ${isFeature ? "grid-cols-1 lg:grid-cols-2" : "grid-cols-1"}`}>
         <LotMapPreview
           lotCode={lot.code}
           hectares={lot.hectares}
           altitude={lot.altitudeMasl}
           coordinates={lot.coordinates}
-          className={isFeature ? "min-h-[260px]" : "h-44"}
+          className={isFeature ? "min-h-[260px]" : "h-44 sm:h-48"}
         />
 
-        <div className={`flex flex-col gap-4 p-6 ${isFeature ? "lg:p-8" : ""}`}>
+        <div className={`flex flex-col gap-4 p-5 ${isFeature ? "lg:p-7" : ""}`}>
           <div className="flex items-start justify-between gap-3">
-            <div>
-              <div className="eyebrow">{lot.region}</div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-paper-3">{lot.code}</span>
+                <span className="coordinate">·· {lot.region}</span>
+              </div>
               <h3
-                className={`mt-2 ${isFeature ? "text-2xl lg:text-3xl" : "text-xl"} font-light tracking-tight text-harv-text`}
+                className={`mt-2 font-display ${
+                  isFeature ? "text-[clamp(1.75rem,2.6vw,2.4rem)]" : "text-[clamp(1.4rem,2vw,1.75rem)]"
+                } leading-[0.98] tracking-[-0.02em] text-paper`}
               >
                 {lot.farmName}
               </h3>
-              <p className="mt-1 text-sm text-muted-harv">
+              <p className="mt-2 text-[13px] leading-relaxed text-paper-2">
                 {lot.varietal} · {lot.process} · SCA {(lot.scaScoreTenths / 10).toFixed(1)}
               </p>
             </div>
             <StatusPill status={lot.status} />
           </div>
 
-          {isFeature ? <p className="text-sm leading-relaxed text-muted-harv">{lot.summary}</p> : null}
+          {isFeature ? <p className="text-sm leading-relaxed text-paper-2">{lot.summary}</p> : null}
 
-          <div className="grid grid-cols-3 gap-3 border-t border-white/5 pt-4">
+          <div className="grid grid-cols-3 gap-3 border-t border-rule pt-4">
             <div>
               <div className="eyebrow">Ticket</div>
-              <div className="mono-hash mt-1 text-sm text-harv-text">
-                {plan ? formatCurrency(plan.ticketCents) : "—"}
-              </div>
+              <div className="font-mono mt-1 text-base text-paper">{plan ? formatCurrency(plan.ticketCents) : "—"}</div>
             </div>
             <div>
               <div className="eyebrow">Yield cap</div>
-              <div className="mono-hash mt-1 text-sm text-harv-text">
+              <div className="font-mono mt-1 text-base text-paper">
                 {plan ? `${(plan.yieldCapY1TenthsQQ / 10).toFixed(1)} qq` : "—"}
               </div>
             </div>
             <div>
               <div className="eyebrow">Farmer split</div>
-              <div className="mono-hash mt-1 text-sm text-harv-text">
+              <div className="font-mono mt-1 text-base text-paper">
                 {plan ? `${(plan.splitFarmerBps / 100).toFixed(0)}%` : "—"}
               </div>
             </div>
           </div>
 
-          <div className="mt-2 flex items-center justify-between">
-            <span className="eyebrow">Testnet demo · Not financial advice</span>
+          <div className="mt-1 flex items-center justify-between gap-3">
+            <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-paper-3">local · MockUSDC</span>
             <Link
               href={`/partner/lots/${lot.code}`}
-              className="group inline-flex items-center gap-1.5 text-sm text-[color:var(--color-harv-mint)] hover:text-harv-text"
+              className="group/link inline-flex items-center gap-1.5 text-sm text-leaf hover:text-paper"
             >
-              Review lot
-              <ArrowRightIcon className="h-4 w-4 transition group-hover:translate-x-0.5" />
+              {isAvailable ? "Review lot" : "Open lot"}
+              <ArrowRightIcon className="h-4 w-4 transition group-hover/link:translate-x-0.5" />
             </Link>
           </div>
         </div>
       </div>
-    </GlassCard>
+    </Panel>
   );
 };

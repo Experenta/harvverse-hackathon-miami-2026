@@ -1,4 +1,4 @@
-import { Geist, IBM_Plex_Mono } from "next/font/google";
+import { Fraunces, Geist, JetBrains_Mono } from "next/font/google";
 import "@rainbow-me/rainbowkit/styles.css";
 import "@scaffold-ui/components/styles.css";
 import { ScaffoldEthAppWithProviders } from "~~/components/ScaffoldEthAppWithProviders";
@@ -6,23 +6,33 @@ import { ThemeProvider } from "~~/components/ThemeProvider";
 import "~~/styles/globals.css";
 import { getMetadata } from "~~/utils/scaffold-eth/getMetadata";
 
+// Body — clean, contemporary, neutral
 const geistSans = Geist({
   subsets: ["latin"],
   variable: "--font-geist-sans",
   display: "swap",
 });
 
-const plexMono = IBM_Plex_Mono({
+// Mono — terminal/cryptographic precision
+const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
-  variable: "--font-plex-mono",
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-jetbrains-mono",
   display: "swap",
+});
+
+// Display — soft optical serif, organic for a coffee/agronomy product
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-fraunces",
+  display: "swap",
+  axes: ["SOFT", "opsz"],
 });
 
 export const metadata = getMetadata({
   title: "Harvverse — Coffee Lot Partnerships",
   description:
-    "Testnet demo: review specialty coffee lots, sign on-chain partnerships, and inspect deterministic settlement proofs. Not financial advice.",
+    "Local-only demo: review specialty coffee lots, sign onchain partnerships, and inspect deterministic settlement proofs. Not financial advice.",
 });
 
 const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
@@ -31,7 +41,7 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
       lang="en"
       suppressHydrationWarning
       data-theme="harvverse"
-      className={`${geistSans.variable} ${plexMono.variable}`}
+      className={`${geistSans.variable} ${jetbrainsMono.variable} ${fraunces.variable}`}
     >
       <body className="antialiased">
         <ThemeProvider attribute="data-theme" defaultTheme="harvverse" forcedTheme="harvverse" enableSystem={false}>

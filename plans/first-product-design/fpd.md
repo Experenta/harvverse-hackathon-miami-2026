@@ -2,7 +2,7 @@
 
 **Version:** 0.1 (MVP)
 **Status:** Draft
-**Scope:** Current Scaffold-ETH 2 Hardhat + Convex scaffold -> a testnet-only Harvverse demo where a Digital Partner reviews a coffee lot, signs a wallet-owned partnership transaction, receives a non-transferable certificate, and sees evidence-backed deterministic settlement.
+**Scope:** Current Scaffold-ETH 2 Hardhat + Convex scaffold -> a local-only Harvverse demo where a Digital Partner reviews a coffee lot, receives a Convex Agent explanation over locked facts, signs wallet-owned local-chain transactions, receives a non-transferable certificate, and sees evidence-backed deterministic settlement.
 **Prerequisite:** Repository baseline only: `packages/hardhat`, `packages/nextjs`, root `convex/`, `pnpm` workspace, and the existing source materials referenced by the first product plan. No Harvverse contracts, Convex schema, or frontend routes are assumed to already exist.
 
 ---
@@ -11,10 +11,10 @@
 
 1. [Goals & Non-Goals](#1-goals--non-goals)
 2. [Actors & Roles](#2-actors--roles)
-3. [End-to-End Flow Overview](#3-end-to-end-flow-overview)
-4. [Phase 1: Repository Baseline and Contract Foundation](#4-phase-1-repository-baseline-and-contract-foundation)
+3. [Experience-Led Flow Overview](#3-experience-led-flow-overview)
+4. [Phase 1: Local Demo Foundation](#4-phase-1-local-demo-foundation)
 5. [Phase 2: Plan Data and Evidence Baseline](#5-phase-2-plan-data-and-evidence-baseline)
-6. [Phase 3: Discovery, Proposal, and AI Explanation](#6-phase-3-discovery-proposal-and-ai-explanation)
+6. [Phase 3: Discovery, Proposal, and Convex Agent Explanation](#6-phase-3-discovery-proposal-and-convex-agent-explanation)
 7. [Phase 4: Partner Signing and Certificate Mint](#7-phase-4-partner-signing-and-certificate-mint)
 8. [Phase 5: Milestone Attestations](#8-phase-5-milestone-attestations)
 9. [Phase 6: Settlement and Demo Proof](#9-phase-6-settlement-and-demo-proof)
@@ -42,33 +42,33 @@ This document is aligned to the repository as it exists now:
 | Package manager | `pnpm@10.17.1` with `pnpm-workspace.yaml`                                                                                                                                                                                             | All install commands use `pnpm`, not `yarn`.                                                                                                |
 | Frontend        | Next.js App Router, React 19, RainbowKit, wagmi, viem, DaisyUI 5, `@scaffold-ui/components`                                                                                                                                           | Use App Router routes, Scaffold-ETH hooks, DaisyUI classes, and `@scaffold-ui/components` for web3 UI.                                      |
 | Contracts       | `@openzeppelin/contracts` is already installed in `packages/hardhat` at `~5.0.2`                                                                                                                                                      | Do not add OpenZeppelin again. Use OpenZeppelin v5 named imports and verify override points from installed source.                          |
-| Chain config    | `packages/hardhat/hardhat.config.ts` already includes `celoSepolia`, `baseSepolia`, `polygonAmoy`, and common EVM networks; `packages/nextjs/scaffold.config.ts` currently targets `hardhat` only                                     | Keep local development on `hardhat`; add the selected demo testnet to `scaffold.config.ts` only when ready to deploy.                       |
-| Convex          | Root `convex/` exists with generated files and `convex/_generated/ai/guidelines.md`; no application schema/functions yet                                                                                                              | Define `convex/schema.ts` and functions from scratch, using validators and `internal*` functions for private paths.                         |
+| Chain config    | `packages/hardhat/hardhat.config.ts` includes public EVM networks, but `packages/nextjs/scaffold.config.ts` currently targets `hardhat` only                                                                                           | MVP stays local-only on `hardhat` `31337`. Public testnets are post-MVP adapters, not part of the demo-critical path.                       |
+| Convex          | Root `convex/` exists with `README.md`, `tsconfig.json`, and generated AI guidance at `convex/_generated/ai/guidelines.md`                                                                                                             | Read `convex/_generated/ai/guidelines.md` before implementing Convex code. Define `convex/schema.ts`, app functions, and the `@convex-dev/agent` component wiring from scratch using validators, indexes, bounded queries, and `internal*` functions as specified there. |
 | Contract hooks  | `packages/nextjs/hooks/scaffold-eth` exports `useScaffoldReadContract`, `useScaffoldWriteContract`, `useScaffoldEventHistory`, `useScaffoldWatchContractEvent`, `useDeployedContractInfo`, `useScaffoldContract`, and `useTransactor` | Frontend contract interactions must use these hook names, not older `useScaffoldContractRead` or raw wagmi wrappers for deployed contracts. |
 | Existing app    | `YourContract.sol` and the default SE-2 home/debug pages are still scaffold examples                                                                                                                                                  | Harvverse work should add feature contracts/routes and stop relying on `YourContract` once the feature contracts land.                      |
 
 ### 1.2 Goals
 
-- Deliver a 5-minute hackathon demo where a user can browse one coffee lot, review terms, ask a bounded explanation question, sign a testnet partnership, receive a non-transferable certificate, and see settlement proof.
-- Use Convex as the only application backend for data, role checks, deterministic calculations, chain-event reconciliation, AI orchestration, and demo fallback state.
+- Deliver a 5-minute hackathon demo where a user can browse one coffee lot, review terms, ask a bounded explanation question, sign a local-chain partnership, receive a non-transferable certificate, and see settlement proof.
+- Use Convex as the only application backend for data, role checks, deterministic calculations, chain-event reconciliation, Convex Agent orchestration, direct backend reference-data calls, and demo fallback state.
 - Use Scaffold-ETH 2 Hardhat flow for Solidity development: contracts in `packages/hardhat/contracts/`, deploy scripts in `packages/hardhat/deploy/`, tests in `packages/hardhat/test/`, and generated ABIs in `packages/nextjs/contracts/deployedContracts.ts`.
 - Keep financial authority wallet-owned: Digital Partners sign their own approval and partnership transactions; admins/operators/custodians sign their own privileged transactions; Convex never stores or uses runtime private keys for financial actions.
 - Put only high-value proof onchain: lot-term configuration, partnership opening, non-transferable certificate mint, evidence attestation events, and settlement execution.
 - Treat evidence as accountable claims, not objective truth. Photos, receipts, agronomist review, sensor snapshots, and harvest fixtures require an attester identity and artifact hash.
-- Use deterministic calculators for all financial math. AI may explain locked facts but cannot alter proposal terms, settlement inputs, or payout amounts.
-- Correct risky product language from the imported plan: testnet-only, no real funds, no production custody, no guarantee, no transferable investment NFT, no HARVI ERC-20 token in MVP.
+- Use deterministic calculators for all financial math. The Convex Agent may explain locked facts but cannot alter proposal terms, settlement inputs, or payout amounts.
+- Correct risky product language from the imported plan: local-only, no real funds, no production custody, no guarantee, no transferable investment NFT, no HARVI ERC-20 token, no Chainlink-controlled settlement or required Chainlink dependency, and no n8n in MVP.
 
 ### 1.3 Source Corrections This Design Assumes
 
 | Source Claim / Drift                                                              | Design Correction                                                                                                                                                      |
 | --------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| "Harvverse never touches the money" while showing escrow and settlement contracts | Split production and demo. Production custody is a legal/off-chain institution; demo custody is testnet MockUSDC sent to an explicit escrow wallet or settlement pool. |
-| Chainlink determines the 3-year ROI                                               | Chainlink, if used, is a reference/provenance signal. MVP settlement uses fixed contract terms and deterministic math.                                                 |
+| "Harvverse never touches the money" while showing escrow and settlement contracts | Split production and demo. Production custody is a legal/off-chain institution; demo custody is local MockUSDC sent to an explicit local escrow wallet or settlement pool. |
+| Chainlink determines the 3-year ROI                                               | Removed as a settlement input. The demo may show a Convex/backend or optional Chainlink reference signal for display only; settlement uses plan-defined onchain terms and deterministic math. |
 | A transferable Lot NFT represents profit rights                                   | MVP uses a non-transferable `LotCertificate` receipt/provenance certificate.                                                                                           |
 | HARVI points as a USD-valued ERC-20                                               | Deferred. Use Convex-only demo points or evidence milestones if needed.                                                                                                |
 | R2 yield floor as a guarantee                                                     | Deferred until prefunded reserve, insurance, and legal terms exist.                                                                                                    |
-| `$156/$104` exact settlement                                                      | Contract computes cents exactly. UI may round for display, but explorer proof shows exact USDC base-unit transfers.                                                    |
-| `n8n` / Express / Postgres workflows                                              | Removed. Convex owns backend functions and data for this repo.                                                                                                         |
+| `$156/$104` exact settlement                                                      | Contract computes cents exactly. UI may round for display, but the local proof view shows exact USDC base-unit transfers.                                             |
+| `n8n` / Express / Postgres workflows                                              | Removed. Convex owns backend functions, data, agent orchestration, reference-data fetches, and demo state for this repo.                                               |
 
 ### 1.4 Non-Goals (Deferred)
 
@@ -76,8 +76,9 @@ This document is aligned to the repository as it exists now:
 - Production securities, commodities, lending, crowdfunding, or fiduciary compliance analysis (requires counsel).
 - Live IoT ingestion from physical sensors (Phase 2 after MVP).
 - Tradeable NFTs, secondary markets, HARVI ERC-20 points, or USD-pegged in-app tokens (deferred until legal review).
-- Production Chainlink coffee data feed or Chainlink Functions settlement authority (roadmap only).
+- Production Chainlink coffee data feed, required Chainlink Functions dependency, or oracle-controlled settlement authority.
 - Ponder, Subgraph, Drizzle, Neon, or n8n integration (not needed for this MVP).
+- Public testnet deployment, faucet dependency, block explorer verification, or Vercel production deployment for the MVP rehearsal/demo path.
 - Full multi-farm marketplace (MVP has one active lot plus optional disabled comparables).
 
 ---
@@ -93,11 +94,11 @@ This document is aligned to the repository as it exists now:
 | Verifier / Agronomist        | Plan or evidence attester                                         | Allowlisted wallet + Convex role                           | Attest plan validity, milestone evidence, and harvest fixture.                                                        |
 | Harvverse Admin              | Demo operator                                                     | Allowlisted wallet + Convex `admin` role                   | Seed lots/plans, configure demo flags, register deployments, coordinate admin-only transactions.                      |
 | Settlement Operator          | Admin sub-role                                                    | Allowlisted wallet + Convex role + contract role           | Sign settlement execution after funding and checks pass.                                                              |
-| Custodian / FI Escrow Wallet | Testnet custody wallet in demo; regulated custodian in production | Configured wallet address                                  | Fund settlement pool when demo custody is not collapsed into the operator wallet.                                     |
+| Custodian / Demo Escrow Wallet | Local-chain custody wallet in demo; regulated custodian in production | Configured wallet address                                  | Fund settlement pool when demo custody is not collapsed into the operator wallet.                                     |
 | Contract Deployer            | Technical operator                                                | Local Hardhat deployer account                             | Deploy contracts, configure roles, verify contracts, generate frontend ABIs.                                          |
-| Convex System                | Backend functions, scheduled jobs, and actions                    | Convex internal functions + server env secrets             | Store canonical app state, call LLM/RPC/external APIs, reconcile chain events; must not sign financial transactions.  |
-| Block Explorer               | Public chain explorer                                             | Chain data                                                 | Provides transaction and event proof links.                                                                           |
-| Judge / Public Viewer        | Read-only observer                                                | No auth                                                    | View published demo lot, proof artifacts, and transaction links.                                                      |
+| Convex System                | Backend functions, scheduled jobs, actions, and Agent component orchestration | Convex internal functions + server env secrets             | Store canonical app state, call LLM/local reference-data APIs, reconcile local-chain events; must not sign financial transactions. |
+| Local Proof Viewer           | App transaction/proof panel, wallet activity, and optional local explorer/debug view | Local chain data                                           | Provides transaction hashes, decoded events, certificate state, and settlement proof in a controlled environment.      |
+| Judge / Public Viewer        | Read-only observer                                                | No auth                                                    | View published demo lot, proof artifacts, and transaction details in the local app.                                   |
 
 ### 2.2 Application Role <-> Contract Role Mapping
 
@@ -120,13 +121,37 @@ This document is aligned to the repository as it exists now:
 | `farmer`              | Assigned lot/settlement summary                                  | No admin mutation access.                                                                  |
 | `verifier`            | Evidence creation and attestation status for assigned demo scope | Cannot change financial terms.                                                             |
 | `admin`               | Demo seed, deployment registration, fallback toggles, full read  | Every public admin function must check role.                                               |
-| `settlement_operator` | Settlement intent and execution tracking                         | Cannot alter plan economics after proposal lock.                                           |
+| `settlement_operator` | Settlement intent and execution tracking                         | Cannot alter snapshotted plan economics.                                                   |
 | `custodian`           | Funding instructions and funding hash submission                 | Cannot view unrelated partner proposal details.                                            |
 | `system`              | Internal functions only                                          | Use `internalQuery`, `internalMutation`, and `internalAction` for sensitive orchestration. |
 
 ---
 
-## 3. End-to-End Flow Overview
+## 3. Experience-Led Flow Overview
+
+The MVP is built from the desired demo experience backward. `ui-demo.md` is the audience-visible reference, while this document remains the reality-bound implementation spec. The build should preserve the screen order, proof moments, and pacing of the UI demo without inheriting unsupported claims about production custody, guaranteed returns, Chainlink settlement authority, or live IoT.
+
+### 3.1 Experience Principles
+
+- The demo is screen-led: each phase starts from what Maria, Jorge, and the judges see.
+- Local control is part of the architecture: Hardhat, local MockUSDC, seeded Convex data, cached backend reference values, and deterministic fixtures must work without public testnets, faucets, block explorers, n8n, or required Chainlink services.
+- Web3 remains real where it matters: wallet connection, token approval, partnership opening, certificate mint, evidence attestation events, settlement execution, and event reconciliation are still on the local chain.
+- Convex is the only backend. It owns canonical data, role checks, deterministic previews, local reference-data calls, the Agent component workflow, chain reconciliation, and fallback/demo flags.
+- The Convex Agent may narrate, stream, store thread history, and answer bounded what-if questions over locked facts. It must not compute terms, mutate proposal economics, create settlement inputs, sign transactions, or make legal/financial promises.
+- Every number visible in the UI must be traceable to one of three sources: seeded plan data, deterministic Convex/contract math, or a labeled backend reference-data fixture.
+
+### 3.2 Screen-to-Phase Map
+
+| Experience Phase | `ui-demo.md` Screens | Audience Goal | Reality-Bound Build Requirement |
+| ---------------- | -------------------- | ------------- | ------------------------------- |
+| Phase 1: Local Demo Foundation | Setup before Screen 0 | Make the demo deterministic and controllable. | Run `pnpm chain`, deploy local contracts, seed Convex, register local deployments, mint/fund local MockUSDC wallets. |
+| Phase 2: Plan Data and Evidence Baseline | Supports Screens 1-2 | Make the lot feel real before the user configures it. | Store canonical lot, plan, milestone, artifact hashes, and evidence fixtures in Convex; optionally attest plan hash on local `EvidenceRegistry`. |
+| Phase 3: Discovery, Proposal, and Agent Explanation | Screens 0-5 | Let Maria browse, understand, and ask bounded questions. | Load published lot and locked preview from Convex; use Convex Agent threads for explanation/Q&A; use direct Convex backend reference data for coffee/native price display with cached fallback. |
+| Phase 4: Terms Review and Wallet-Owned Signing | Screens 6-8 | Make the commitment feel explicit and wallet-owned. | Create canonical proposal hash in Convex; Maria signs local MockUSDC approval and `openPartnership`; contract mints non-transferable `LotCertificate`; Convex reconciles local events. |
+| Phase 5: Compressed Execution Timeline | Screen 9 | Compress the farming cycle without pretending it happened live. | Admin creates demo fixture evidence records; verifier/admin wallet attests hashes on local `EvidenceRegistry`; UI labels compressed demo time clearly. |
+| Phase 6: Harvest Registration and Settlement Proof | Screens 10-14 | Deliver the second proof moment: deterministic payout and wallet-visible result. | Admin enters harvest fixture; Convex creates settlement intent; operator funds/settles local `SettlementDistributor`; app shows decoded local events, local tx hashes, payout amounts, and certificate status. |
+
+### 3.3 Local End-to-End Sequence
 
 ```mermaid
 sequenceDiagram
@@ -136,36 +161,39 @@ sequenceDiagram
     participant AW as Admin / Operator Wallet
     participant UI as Next.js / Scaffold-ETH UI
     participant CVX as Convex Backend
-    participant LLM as LLM Provider
-    participant USDC as MockUSDC
-    participant ESC as Demo Escrow Wallet
+    participant AG as Convex Agent Component
+    participant REF as Convex Reference Data
+    participant USDC as Local MockUSDC
+    participant ESC as Local Demo Escrow Wallet
     participant PF as PartnershipFactory
     participant CERT as LotCertificate
     participant REG as EvidenceRegistry
     participant SET as SettlementDistributor
-    participant EX as Block Explorer
+    participant PROOF as Local Proof View
 
-    Note over ADM,CVX: Phase 1 - repo baseline and contract foundation
+    Note over ADM,CVX: Phase 1 - local demo foundation
     ADM->>CVX: Seed demo lot, plan, roles, custody account
     AW->>USDC: Deploy MockUSDC
     AW->>CERT: Deploy LotCertificate
     AW->>PF: Deploy PartnershipFactory
     AW->>REG: Deploy EvidenceRegistry
     AW->>SET: Deploy SettlementDistributor
-    AW->>PF: configureLotTerms(lotId, ticket, farmerWallet, planHash)
-    PF-->>EX: LotTermsConfigured
+    AW->>PF: configureLotTerms(lotId, ticket, farmerWallet, planHash, economics)
+    PF-->>PROOF: Local LotTermsConfigured event
 
     Note over ADM,REG: Phase 2 - plan and evidence baseline
     ADM->>CVX: Store plan fields and source artifact hash
     AW->>REG: attestEvidence(planHash, lotId, 0, "HarvversePlan")
-    REG-->>EX: EvidenceAttested
+    REG-->>PROOF: Local EvidenceAttested event
     CVX->>REG: Reconcile attestation tx
 
-    Note over DP,LLM: Phase 3 - discovery and explanation
+    Note over DP,AG: Phase 3 - discovery and Agent explanation
     DP->>UI: Open active lot
     UI->>CVX: Load published lot and deterministic preview
-    CVX->>LLM: Optional explanation over locked facts
-    CVX-->>UI: Facts, fallback-safe explanation, proposal CTA
+    CVX->>REF: Read backend reference values or cached fixtures
+    CVX->>AG: Generate/stream explanation over locked facts
+    AG-->>CVX: Saved thread messages and response text
+    CVX-->>UI: Facts, reference values, fallback-safe explanation, proposal CTA
 
     Note over DP,PF: Phase 4 - wallet-owned partnership
     DP->>UI: Confirm proposal
@@ -176,41 +204,41 @@ sequenceDiagram
     PW->>PF: openPartnership(lotId, proposalHash)
     PF->>USDC: transferFrom(Partner Wallet, Demo Escrow Wallet, ticket)
     PF->>CERT: mintCertificate(Partner Wallet, partnershipId)
-    PF-->>EX: PartnershipOpened
-    CERT-->>EX: Transfer mint event
+    PF-->>PROOF: Local PartnershipOpened event
+    CERT-->>PROOF: Local Transfer mint event
     CVX->>PF: Reconcile logs and mark signed
 
     Note over ADM,REG: Phase 5 - compressed milestone attestations
     ADM->>UI: Fast-forward milestone fixture
     UI->>CVX: Create evidence records and artifact hashes
     AW->>REG: attestEvidence(milestoneHash, partnershipId, milestone)
-    REG-->>EX: EvidenceAttested
+    REG-->>PROOF: Local EvidenceAttested event
     CVX->>REG: Reconcile evidence events
 
     Note over ADM,SET: Phase 6 - settlement proof
     ADM->>CVX: Create settlement intent from harvest fixture
-    CVX-->>UI: Required funding and settlement calldata
+    CVX-->>UI: Required funding and settlement calldata (id, yield, evidence hash)
     AW->>USDC: transfer(SettlementDistributor, requiredProfit)
     UI->>AW: Request settlement execution
-    AW->>SET: settle(input)
+    AW->>SET: settle({partnershipId, yieldTenthsQQ, evidenceHash})
     SET->>USDC: transfer(farmer, farmerShare)
     SET->>USDC: transfer(partner, partnerShare)
-    SET-->>EX: SettlementExecuted
+    SET-->>PROOF: Local SettlementExecuted event
     CVX->>SET: Reconcile settlement event
-    UI-->>DP: Show exact amounts and explorer links
+    UI-->>DP: Show exact amounts, local tx hashes, decoded events, and wallet balances
 ```
 
 ---
 
-## 4. Phase 1: Repository Baseline and Contract Foundation
+## 4. Phase 1: Local Demo Foundation
 
 ### 4.1 What Happens
 
 The project starts from the current SE-2 Hardhat scaffold. The MVP adds Harvverse-specific contracts and leaves the default `YourContract` behind as a scaffold example until it is removed by an implementation phase.
 
-Local development remains on `hardhat`. The demo testnet should be chosen from networks already present in `packages/hardhat/hardhat.config.ts` unless a sponsor requirement forces a new network. Today, `celoSepolia`, `baseSepolia`, and `polygonAmoy` are already configured in Hardhat; the frontend currently targets only `hardhat`.
+The demo environment is local-only. Run a local Hardhat chain, deploy local contracts, register the local deployment addresses in Convex, seed the Zafiro plan data, and keep the frontend target network fixed to `hardhat` for the MVP. Public testnet selection is intentionally deferred so rehearsals do not depend on faucet liquidity, external RPC health, contract verification, or public explorer indexing.
 
-> **Repository decision:** Do not introduce a parallel chain-config system as the source of truth for wallet connections. Configure target networks in `packages/nextjs/scaffold.config.ts`, and keep optional Harvverse metadata in a small helper only if the UI needs labels such as explorer names or attestation mode.
+> **Repository decision:** Do not introduce a parallel chain-config system as the source of truth for wallet connections. The MVP target network is `hardhat` only. Keep optional Harvverse metadata in a small helper only if the UI needs labels such as "local proof view", "local tx hash", or "attestation mode".
 
 ### 4.2 Target Network Configuration
 
@@ -220,50 +248,38 @@ import * as chains from "viem/chains";
 
 const chainByKey = {
   hardhat: chains.hardhat,
-  celoSepolia: chains.celoSepolia,
-  baseSepolia: chains.baseSepolia,
-  polygonAmoy: chains.polygonAmoy,
 } as const;
 
 type SupportedChainKey = keyof typeof chainByKey;
 
-const activeChainKey = (process.env.NEXT_PUBLIC_ACTIVE_CHAIN_KEY ??
-  "hardhat") as SupportedChainKey;
-const activeChain = chainByKey[activeChainKey] ?? chains.hardhat;
-const celoSepoliaRpcUrl = process.env.NEXT_PUBLIC_CELO_SEPOLIA_RPC_URL;
+const activeChainKey = "hardhat" satisfies SupportedChainKey;
+const activeChain = chainByKey[activeChainKey];
 
 const scaffoldConfig = {
   targetNetworks: [activeChain],
-  pollingInterval: activeChain.id === chains.hardhat.id ? 3000 : 5000,
+  pollingInterval: 3000,
   alchemyApiKey:
     process.env.NEXT_PUBLIC_ALCHEMY_API_KEY || DEFAULT_ALCHEMY_API_KEY,
-  rpcOverrides: celoSepoliaRpcUrl
-    ? { [chains.celoSepolia.id]: celoSepoliaRpcUrl }
-    : {},
   walletConnectProjectId:
     process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID ||
     "3a8170812b534d0ff9d794f19a901d64",
-  burnerWalletMode:
-    activeChain.id === chains.hardhat.id ? "localNetworksOnly" : "disabled",
+  burnerWalletMode: "localNetworksOnly",
 } as const satisfies ScaffoldConfig;
 ```
 
-| Chain           | Current Repo Support                                    | MVP Use                                                                      |
-| --------------- | ------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| Hardhat `31337` | Already target network in Next and default Hardhat flow | Local build and fast demo rehearsals.                                        |
-| Celo Sepolia    | Already in Hardhat config                               | Preferred Celo-aligned testnet unless sponsor requires another Celo testnet. |
-| Base Sepolia    | Already in Hardhat config                               | Fallback if EAS/tooling support matters more than Celo narrative.            |
-| Polygon Amoy    | Already in Hardhat config                               | General EVM fallback.                                                        |
-| Celo Alfajores  | Not currently in Hardhat config                         | Add only if Chainlink/sponsor requirements demand it.                        |
+| Chain           | Current Repo Support                                    | MVP Use                                                               |
+| --------------- | ------------------------------------------------------- | --------------------------------------------------------------------- |
+| Hardhat `31337` | Already target network in Next and default Hardhat flow | Required local build, rehearsal, judging, and deterministic testing.  |
+| Public testnets | Present in Hardhat config, not selected in Next         | Deferred adapter work after the local demo is stable.                 |
 
 ### 4.3 Contract Set
 
 | Contract                    | Purpose                                                                          | MVP Decision                                                     |
 | --------------------------- | -------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| `MockUSDC.sol`              | 6-decimal demo stablecoin for testnet transfers                                  | Required unless an official testnet USDC is selected and funded. |
+| `MockUSDC.sol`              | 6-decimal demo stablecoin for local transfers                                    | Required; minted and funded during local demo setup.             |
 | `LotCertificate.sol`        | Non-transferable ERC-721 receipt/provenance certificate                          | Required; not a financial instrument or secondary-market asset.  |
 | `PartnershipFactory.sol`    | Stores active lot terms, opens partnership, pulls demo ticket, mints certificate | Required.                                                        |
-| `EvidenceRegistry.sol`      | Emits attestation-compatible evidence events                                     | Required fallback when EAS is unavailable or too slow for MVP.   |
+| `EvidenceRegistry.sol`      | Emits local attestation-compatible evidence events                               | Required; EAS is not part of the MVP local architecture.         |
 | `SettlementDistributor.sol` | Recomputes settlement math and transfers profit shares once                      | Required.                                                        |
 | `MilestoneEscrow.sol`       | Releases working-capital tranches                                                | Deferred; milestone funding is off-chain/demo fixture in MVP.    |
 | `HarviToken.sol`            | HARVI points/token                                                               | Deferred for legal/accounting review.                            |
@@ -351,11 +367,20 @@ contract PartnershipFactory is AccessControl, ReentrancyGuard {
 
     bytes32 public constant CONFIGURATOR_ROLE = keccak256("CONFIGURATOR_ROLE");
 
+    struct PlanEconomics {
+        uint256 fixedPriceCentsPerLb;
+        uint256 priceFloorCentsPerLb;
+        uint256 agronomicCostCents;
+        uint256 yieldCapY1TenthsQQ;
+        uint16 farmerShareBps;
+    }
+
     struct LotTerms {
         bool active;
         uint256 ticketUsdcUnits;
         address farmerWallet;
         bytes32 planHash;
+        PlanEconomics economics;
     }
 
     IERC20 public immutable usdc;
@@ -366,9 +391,20 @@ contract PartnershipFactory is AccessControl, ReentrancyGuard {
     mapping(uint256 lotId => LotTerms terms) public lotTerms;
     mapping(uint256 partnershipId => address partner) public partnerOf;
     mapping(uint256 partnershipId => address farmer) public farmerOf;
+    mapping(uint256 partnershipId => PlanEconomics economics) public partnershipEconomics;
     mapping(bytes32 proposalHash => bool used) public openedProposalHashes;
 
-    event LotTermsConfigured(uint256 indexed lotId, uint256 ticketUsdcUnits, address farmerWallet, bytes32 planHash);
+    event LotTermsConfigured(
+        uint256 indexed lotId,
+        uint256 ticketUsdcUnits,
+        address farmerWallet,
+        bytes32 planHash,
+        uint256 fixedPriceCentsPerLb,
+        uint256 priceFloorCentsPerLb,
+        uint256 agronomicCostCents,
+        uint256 yieldCapY1TenthsQQ,
+        uint16 farmerShareBps
+    );
     event PartnershipOpened(
         uint256 indexed partnershipId,
         uint256 indexed lotId,
@@ -386,22 +422,70 @@ contract PartnershipFactory is AccessControl, ReentrancyGuard {
         _grantRole(CONFIGURATOR_ROLE, admin);
     }
 
-    function configureLotTerms(uint256 lotId, uint256 ticketUsdcUnits, address farmerWallet, bytes32 planHash)
+    function configureLotTerms(
+        uint256 lotId,
+        uint256 ticketUsdcUnits,
+        address farmerWallet,
+        bytes32 planHash,
+        PlanEconomics calldata economics
+    )
         external
         onlyRole(CONFIGURATOR_ROLE)
     {
         require(ticketUsdcUnits > 0, "ticket required");
         require(farmerWallet != address(0), "bad farmer");
         require(planHash != bytes32(0), "plan hash required");
-        lotTerms[lotId] = LotTerms(true, ticketUsdcUnits, farmerWallet, planHash);
-        emit LotTermsConfigured(lotId, ticketUsdcUnits, farmerWallet, planHash);
+        require(economics.fixedPriceCentsPerLb > 0, "price required");
+        require(economics.priceFloorCentsPerLb > 0, "floor required");
+        require(economics.fixedPriceCentsPerLb >= economics.priceFloorCentsPerLb, "price below floor");
+        require(economics.agronomicCostCents > 0, "cost required");
+        require(economics.yieldCapY1TenthsQQ > 0, "cap required");
+        require(economics.farmerShareBps <= 10_000, "bad share");
+
+        lotTerms[lotId] = LotTerms({
+            active: true,
+            ticketUsdcUnits: ticketUsdcUnits,
+            farmerWallet: farmerWallet,
+            planHash: planHash,
+            economics: PlanEconomics({
+                fixedPriceCentsPerLb: economics.fixedPriceCentsPerLb,
+                priceFloorCentsPerLb: economics.priceFloorCentsPerLb,
+                agronomicCostCents: economics.agronomicCostCents,
+                yieldCapY1TenthsQQ: economics.yieldCapY1TenthsQQ,
+                farmerShareBps: economics.farmerShareBps
+            })
+        });
+        emit LotTermsConfigured(
+            lotId,
+            ticketUsdcUnits,
+            farmerWallet,
+            planHash,
+            economics.fixedPriceCentsPerLb,
+            economics.priceFloorCentsPerLb,
+            economics.agronomicCostCents,
+            economics.yieldCapY1TenthsQQ,
+            economics.farmerShareBps
+        );
     }
 
     function expectedProposalHash(uint256 lotId, address partner) public view returns (bytes32) {
         LotTerms memory terms = lotTerms[lotId];
         require(terms.active, "lot inactive");
         return keccak256(
-            abi.encode(block.chainid, address(this), lotId, partner, terms.ticketUsdcUnits, terms.farmerWallet, terms.planHash)
+            abi.encode(
+                block.chainid,
+                address(this),
+                lotId,
+                partner,
+                terms.ticketUsdcUnits,
+                terms.farmerWallet,
+                terms.planHash,
+                terms.economics.fixedPriceCentsPerLb,
+                terms.economics.priceFloorCentsPerLb,
+                terms.economics.agronomicCostCents,
+                terms.economics.yieldCapY1TenthsQQ,
+                terms.economics.farmerShareBps
+            )
         );
     }
 
@@ -415,16 +499,39 @@ contract PartnershipFactory is AccessControl, ReentrancyGuard {
         partnershipId = nextPartnershipId++;
         partnerOf[partnershipId] = msg.sender;
         farmerOf[partnershipId] = terms.farmerWallet;
+        partnershipEconomics[partnershipId] = terms.economics;
 
         usdc.safeTransferFrom(msg.sender, escrowWallet, terms.ticketUsdcUnits);
         certificate.mintCertificate(msg.sender, partnershipId, proposalHash);
 
         emit PartnershipOpened(partnershipId, lotId, msg.sender, terms.ticketUsdcUnits, proposalHash);
     }
+
+    function economicsOf(uint256 partnershipId)
+        external
+        view
+        returns (
+            uint256 fixedPriceCentsPerLb,
+            uint256 priceFloorCentsPerLb,
+            uint256 agronomicCostCents,
+            uint256 yieldCapY1TenthsQQ,
+            uint16 farmerShareBps
+        )
+    {
+        require(partnerOf[partnershipId] != address(0), "bad partnership");
+        PlanEconomics memory economics = partnershipEconomics[partnershipId];
+        return (
+            economics.fixedPriceCentsPerLb,
+            economics.priceFloorCentsPerLb,
+            economics.agronomicCostCents,
+            economics.yieldCapY1TenthsQQ,
+            economics.farmerShareBps
+        );
+    }
 }
 ```
 
-> **Terms decision:** Convex displays and stores proposals, but the contract recomputes `expectedProposalHash` from onchain terms before pulling funds. Convex-only terms never decide how much value moves.
+> **Terms decision:** Convex displays and stores proposals, but the contract recomputes `expectedProposalHash` from onchain lot terms and plan economics before pulling funds. Opening a partnership snapshots those economics by `partnershipId`, so later lot reconfiguration cannot change an existing settlement.
 
 ---
 
@@ -444,7 +551,7 @@ Evidence is modeled as claims:
 | `status`                          | Whether the claim is recorded, attested, or revoked.                        |
 | `demoOnly`                        | Whether the claim is fixture evidence rather than production evidence.      |
 
-> **Evidence decision:** The blockchain proves that an attester made a claim at a time. It does not prove the farm condition is true. The UI must make that boundary visible.
+> **Evidence decision:** The local chain proves that an attester wallet made a claim during the controlled demo. It does not prove the farm condition is true. The UI must make that boundary visible.
 
 ### 5.2 Milestone Setup for the Zafiro Example
 
@@ -535,12 +642,12 @@ export const seedFirstLot = mutation({
       contingencyCents: 14_900,
       platformFeeCents: 16_400,
       workingCapitalCents: 162_200,
-      priceCentsPerLb: 350,
+      fixedPriceCentsPerLb: 350,
       priceFloorCentsPerLb: 250,
       yieldCapY1TenthsQQ: 80,
       projectedYieldY1TenthsQQ: 60,
-      splitFarmerBps: 6000,
-      splitPartnerBps: 4000,
+      farmerShareBps: 6000,
+      partnerShareBps: 4000,
       phygitalCoffeeLb: 5,
       phygitalDeliveryMonth: "2027-01",
       createdAt: now,
@@ -704,17 +811,80 @@ contract EvidenceRegistry is AccessControl {
 
 ---
 
-## 6. Phase 3: Discovery, Proposal, and AI Explanation
+## 6. Phase 3: Discovery, Proposal, and Convex Agent Explanation
 
 ### 6.1 What Happens
 
 The public home page becomes the Harvverse active lot page. A Digital Partner connects a wallet and signs a nonce to create a wallet session. Convex then creates a proposal from canonical lot/plan fields and deterministic settlement math.
 
-The AI explanation is optional. It receives locked facts and returns text only. If it times out or violates allowed claims, the UI uses deterministic fallback copy.
+The explanation experience mirrors `ui-demo.md` Screens 3-5: loading state, backend reference-data toasts, four-layer Agent narration, side-panel math, and bounded what-if questions. The implementation uses the Convex Agent component so messages and threads are persisted in Convex and can update reactively in the UI.
 
-> **AI boundary decision:** The LLM never computes terms, proposal hashes, payout amounts, eligibility, or legal advice. It explains precomputed JSON.
+The Agent is optional from a correctness perspective. It receives locked facts and returns text only. If the model, provider, or Agent component path times out, the UI uses deterministic fallback copy.
 
-### 6.2 Proposal Hash Helper
+> **Agent boundary decision:** The LLM never computes terms, proposal hashes, payout amounts, eligibility, settlement inputs, or legal advice. It explains precomputed JSON and may call only allowlisted read-only tools over Convex-owned facts.
+
+### 6.2 Backend Reference Data
+
+The "oracle" toasts from `ui-demo.md` become Convex-backed reference-data toasts. No Chainlink or oracle value is authoritative for proposal or settlement math. The required local path uses cached Convex fixtures; an optional Chainlink Functions/reference adapter may feed the same display-only surface only if sponsor or demo criteria require it.
+
+| UI Moment | Reality-Bound Source | Failure Mode |
+| --------- | -------------------- | ------------ |
+| Plan loaded | Convex `plans` row + `planHash` | Show seeded fixture and mark as local. |
+| Native/USD reference | Convex `referenceData` action/query or cached fixture | Show cached value with timestamp. |
+| Coffee spot reference | Direct call to Harvverse backend or optional Chainlink/reference endpoint, then Convex cache | Show seeded `$3.48/lb` fixture with "cached demo reference" label. |
+
+Reference values are display-only. They do not alter proposal hashes, contract terms, settlement inputs, or payout amounts. Settlement uses the onchain partnership price snapshot and deterministic math.
+
+```typescript
+// Path: convex/referenceData/market.ts
+import { v } from "convex/values";
+import { action } from "../_generated/server";
+import { internal } from "../_generated/api";
+
+const seededFixture = {
+  nativeUsd: { value: "0.6125", unit: "USD/native", source: "seeded_fixture" },
+  coffeeSpot: { value: "3.48", unit: "USD/lb", source: "seeded_fixture" },
+};
+
+export const getMarketReferences = action({
+  args: {
+    sessionId: v.optional(v.string()),
+    lotCode: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const url = process.env.COFFEE_REFERENCE_API_URL;
+    if (!url) return { lotCode: args.lotCode, ...seededFixture };
+
+    try {
+      const response = await fetch(
+        `${url}/reference/coffee?lotCode=${args.lotCode}`,
+        {
+          headers: process.env.COFFEE_REFERENCE_API_KEY
+            ? {
+                authorization: `Bearer ${process.env.COFFEE_REFERENCE_API_KEY}`,
+              }
+            : {},
+        },
+      );
+      if (!response.ok) throw new Error("reference fetch failed");
+
+      const payload = await response.json();
+      await ctx.runMutation(
+        internal.referenceData.internal.cacheReferenceSnapshot,
+        {
+          lotCode: args.lotCode,
+          payload,
+        },
+      );
+      return { lotCode: args.lotCode, source: "backend_api", ...payload };
+    } catch {
+      return { lotCode: args.lotCode, ...seededFixture };
+    }
+  },
+});
+```
+
+### 6.3 Proposal Hash Helper
 
 ```typescript
 // Path: convex/model/proposalHash.ts
@@ -728,11 +898,16 @@ export function computeProposalHash(args: {
   ticketUsdcUnits: bigint;
   farmerWallet: `0x${string}`;
   planHash: `0x${string}`;
+  fixedPriceCentsPerLb: number;
+  priceFloorCentsPerLb: number;
+  agronomicCostCents: number;
+  yieldCapY1TenthsQQ: number;
+  farmerShareBps: number;
 }) {
   return keccak256(
     encodeAbiParameters(
       parseAbiParameters(
-        "uint256,address,uint256,address,uint256,address,bytes32",
+        "uint256,address,uint256,address,uint256,address,bytes32,uint256,uint256,uint256,uint256,uint16",
       ),
       [
         BigInt(args.chainId),
@@ -742,13 +917,20 @@ export function computeProposalHash(args: {
         args.ticketUsdcUnits,
         args.farmerWallet,
         args.planHash,
+        BigInt(args.fixedPriceCentsPerLb),
+        BigInt(args.priceFloorCentsPerLb),
+        BigInt(args.agronomicCostCents),
+        BigInt(args.yieldCapY1TenthsQQ),
+        args.farmerShareBps,
       ],
     ),
   );
 }
 ```
 
-### 6.3 Proposal Creation
+### 6.4 Proposal Creation
+
+Proposal creation must use the same economic fields that were configured onchain for the lot. It may call `PartnershipFactory.expectedProposalHash` through a read path or reproduce the hash from a Convex mirror of the `LotTermsConfigured` event. If the Convex mirror is missing or stale, proposal creation should fail rather than create a hash from Convex-only terms.
 
 ```typescript
 // Path: convex/partner/proposals.ts
@@ -773,9 +955,10 @@ export const createProposal = mutation({
       !lot ||
       lot.status !== "available" ||
       !lot.activePlanId ||
-      lot.onchainLotId === undefined
+      lot.onchainLotId === undefined ||
+      !lot.lotTermsSyncedAt
     ) {
-      throw new Error("Lot is not available for proposal");
+      throw new Error("Lot is not available or onchain terms are not synced");
     }
 
     const plan = await ctx.db.get(lot.activePlanId);
@@ -784,20 +967,22 @@ export const createProposal = mutation({
 
     const deployment = await ctx.db
       .query("contractDeployments")
-      .withIndex("by_chainKey_and_contractName", (q) =>
-        q.eq("chainKey", "hardhat").eq("contractName", "PartnershipFactory"),
+      .withIndex("by_chainKey_and_contractName_and_active", (q) =>
+        q
+          .eq("chainKey", "hardhat")
+          .eq("contractName", "PartnershipFactory")
+          .eq("active", true),
       )
-      .filter((q) => q.eq(q.field("active"), true))
       .unique();
     if (!deployment) throw new Error("PartnershipFactory deployment missing");
 
     const ticketUsdcUnits = BigInt(plan.ticketCents) * 10_000n;
     const preview = computePreview({
       yieldTenthsQQ: plan.projectedYieldY1TenthsQQ,
-      priceCentsPerLb: plan.priceCentsPerLb,
+      fixedPriceCentsPerLb: plan.fixedPriceCentsPerLb,
       agronomicCostCents: plan.agronomicCostCents,
       yieldCapTenthsQQ: plan.yieldCapY1TenthsQQ,
-      splitFarmerBps: plan.splitFarmerBps,
+      farmerShareBps: plan.farmerShareBps,
     });
     const proposalHash = computeProposalHash({
       chainId: deployment.chainId,
@@ -807,6 +992,11 @@ export const createProposal = mutation({
       ticketUsdcUnits,
       farmerWallet: lot.farmerWallet as `0x${string}`,
       planHash: plan.planHash as `0x${string}`,
+      fixedPriceCentsPerLb: plan.fixedPriceCentsPerLb,
+      priceFloorCentsPerLb: plan.priceFloorCentsPerLb,
+      agronomicCostCents: plan.agronomicCostCents,
+      yieldCapY1TenthsQQ: plan.yieldCapY1TenthsQQ,
+      farmerShareBps: plan.farmerShareBps,
     });
 
     const now = Date.now();
@@ -821,6 +1011,11 @@ export const createProposal = mutation({
       profitCents: preview.profitCents,
       farmerCents: preview.farmerCents,
       partnerCents: preview.partnerCents,
+      fixedPriceCentsPerLb: plan.fixedPriceCentsPerLb,
+      priceFloorCentsPerLb: plan.priceFloorCentsPerLb,
+      agronomicCostCents: plan.agronomicCostCents,
+      yieldCapY1TenthsQQ: plan.yieldCapY1TenthsQQ,
+      farmerShareBps: plan.farmerShareBps,
       proposalHash,
       expiresAt: now + 10 * 60 * 1000,
       createdAt: now,
@@ -837,15 +1032,40 @@ export const createProposal = mutation({
 });
 ```
 
-### 6.4 AI Narration Action
+### 6.5 Convex Agent Narration Action
+
+Install and wire the Convex Agent component in `convex/convex.config.ts`:
+
+```typescript
+// Path: convex/convex.config.ts
+import { defineApp } from "convex/server";
+import agent from "@convex-dev/agent/convex.config";
+
+const app = defineApp();
+app.use(agent);
+
+export default app;
+```
+
+The app owns authorization, environment access, locked proposal facts, and client-facing wrappers. The Agent component owns persisted agent threads/messages. Do not expose component functions directly to the client.
 
 ```typescript
 // Path: convex/agent/explainProposal.ts
 "use node";
 
+import { Agent, createThread } from "@convex-dev/agent";
+import { openai } from "@ai-sdk/openai";
 import { v } from "convex/values";
 import { action } from "../_generated/server";
-import { internal } from "../_generated/api";
+import { components, internal } from "../_generated/api";
+
+const harvverseAgent = new Agent(components.agent, {
+  name: "Harvverse Explainer",
+  languageModel: openai.chat("gpt-4o-mini"),
+  instructions:
+    "Explain the Harvverse local demo using only locked facts supplied in the prompt. " +
+    "Do not compute financial terms, promise returns, provide legal advice, or imply public-chain deployment.",
+});
 
 export const explainProposal = action({
   args: {
@@ -858,17 +1078,38 @@ export const explainProposal = action({
       args,
     );
     const fallbackText =
-      `This is a testnet demo for ${facts.lot.code}. The ticket is $${facts.plan.ticketCents / 100}, ` +
+      `This is a local demo for ${facts.lot.code}. The ticket is $${facts.plan.ticketCents / 100}, ` +
       `and the projected partner share is $${Math.round(facts.preview.partnerCents / 100)} under the locked fixture.`;
 
     try {
-      const text = fallbackText;
+      if (!process.env.OPENAI_API_KEY) throw new Error("LLM disabled");
+
+      const threadId = await createThread(ctx, components.agent);
+      const result = await harvverseAgent.generateText(
+        ctx,
+        { threadId },
+        {
+          prompt: JSON.stringify({
+            task: "Write the Screen 4 layer narration for this proposal.",
+            allowedClaims: [
+              "local demo",
+              "locked ticket",
+              "deterministic preview",
+              "non-transferable certificate",
+              "local-chain settlement proof",
+            ],
+            facts,
+          }),
+        },
+      );
+
       await ctx.runMutation(internal.agent.internal.appendAgentEvent, {
         proposalId: args.proposalId,
         eventType: "explanation_complete",
-        text,
+        threadId,
+        text: result.text,
       });
-      return { mode: "generated", text };
+      return { mode: "generated", threadId, text: result.text };
     } catch {
       await ctx.runMutation(internal.agent.internal.appendAgentEvent, {
         proposalId: args.proposalId,
@@ -1049,6 +1290,7 @@ Final status changes happen in an internal event-sync action after verifying:
 | Contract address | Emits from registered active deployment.                                                  |
 | Event            | `PartnershipOpened` contains expected `proposalHash`, partner wallet, lot ID, and amount. |
 | Amount           | Equals onchain lot ticket, not client-submitted value.                                    |
+| Economics        | `economicsOf(partnershipId)` matches the proposal hash inputs and is stored on the partnership row. |
 | Sender           | Partner/admin/custodian wallet matches the verified session role for that action.         |
 
 ---
@@ -1186,7 +1428,7 @@ export function AttestEvidenceButton({
 }
 ```
 
-> **EAS decision:** Use `EvidenceRegistry` for MVP unless the selected chain has a stable EAS deployment and the team has time to register schemas. The demo value is accountable provenance, not the brand name of the attestation backend.
+> **Attestation decision:** Use local `EvidenceRegistry` for MVP. EAS is not part of the local architecture. The demo value is accountable provenance and event reconciliation, not the brand name of the attestation backend.
 
 ---
 
@@ -1200,10 +1442,10 @@ The admin confirms the harvest fixture:
 | -------- | ---------------------------------------------------- |
 | Yield    | `6.0 qq` parchment (`60` tenths)                     |
 | Score    | `84.5` SCA (`845` tenths)                            |
-| Price    | `$3.50/lb` fixed contract price                      |
+| Price    | `$3.50/lb` plan-defined onchain price snapshot       |
 | Evidence | Hash of harvest fixture and related evidence records |
 
-Convex creates a settlement intent and computes the preview. The `SettlementDistributor` recomputes the same values before transferring. The settlement pool must be funded with testnet MockUSDC before execution.
+Convex creates a settlement intent and computes the preview from the partnership economic snapshot mirrored from chain. The `SettlementDistributor` fetches the same snapshot from `PartnershipFactory` before transferring. The settlement transaction carries only `partnershipId`, `yieldTenthsQQ`, and `evidenceHash`; it cannot override price, cost basis, yield cap, or farmer share. The settlement pool must be funded with local MockUSDC before execution.
 
 > **Settlement decision:** Convex prepares and previews settlement; the contract enforces final math and one-time settlement. The operator signs execution from the UI. Convex does not execute settlement.
 
@@ -1222,6 +1464,16 @@ import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol
 interface IPartnershipRegistry {
     function partnerOf(uint256 partnershipId) external view returns (address);
     function farmerOf(uint256 partnershipId) external view returns (address);
+    function economicsOf(uint256 partnershipId)
+        external
+        view
+        returns (
+            uint256 fixedPriceCentsPerLb,
+            uint256 priceFloorCentsPerLb,
+            uint256 agronomicCostCents,
+            uint256 yieldCapY1TenthsQQ,
+            uint16 farmerShareBps
+        );
 }
 
 contract SettlementDistributor is AccessControl, ReentrancyGuard {
@@ -1229,10 +1481,7 @@ contract SettlementDistributor is AccessControl, ReentrancyGuard {
 
     bytes32 public constant SETTLEMENT_OPERATOR_ROLE = keccak256("SETTLEMENT_OPERATOR_ROLE");
     uint256 public constant PARCHMENT_TO_GREEN_TENTHS = 833;
-    uint256 public constant FARMER_SHARE_BPS = 6000;
     uint256 public constant BPS = 10_000;
-    uint256 public constant YIELD_CAP_Y1_TENTHS = 80;
-    uint256 public constant PRICE_FLOOR_CENTS = 250;
 
     IERC20 public immutable usdc;
     IPartnershipRegistry public immutable registry;
@@ -1241,8 +1490,6 @@ contract SettlementDistributor is AccessControl, ReentrancyGuard {
     struct SettlementInput {
         uint256 partnershipId;
         uint256 yieldTenthsQQ;
-        uint256 priceCentsPerLb;
-        uint256 agronomicCostCents;
         bytes32 evidenceHash;
     }
 
@@ -1264,22 +1511,31 @@ contract SettlementDistributor is AccessControl, ReentrancyGuard {
 
     function preview(SettlementInput calldata input)
         public
-        pure
+        view
         returns (uint256 revenueCents, uint256 profitCents, uint256 farmerCents, uint256 partnerCents)
     {
+        (
+            uint256 fixedPriceCentsPerLb,
+            uint256 priceFloorCentsPerLb,
+            uint256 agronomicCostCents,
+            uint256 yieldCapY1TenthsQQ,
+            uint16 farmerShareBps
+        ) = registry.economicsOf(input.partnershipId);
+
         uint256 cappedYield =
-            input.yieldTenthsQQ > YIELD_CAP_Y1_TENTHS ? YIELD_CAP_Y1_TENTHS : input.yieldTenthsQQ;
+            input.yieldTenthsQQ > yieldCapY1TenthsQQ ? yieldCapY1TenthsQQ : input.yieldTenthsQQ;
         uint256 effectivePrice =
-            input.priceCentsPerLb < PRICE_FLOOR_CENTS ? PRICE_FLOOR_CENTS : input.priceCentsPerLb;
+            fixedPriceCentsPerLb < priceFloorCentsPerLb ? priceFloorCentsPerLb : fixedPriceCentsPerLb;
 
         revenueCents = (cappedYield * PARCHMENT_TO_GREEN_TENTHS * effectivePrice) / 100;
-        profitCents = revenueCents > input.agronomicCostCents ? revenueCents - input.agronomicCostCents : 0;
-        farmerCents = (profitCents * FARMER_SHARE_BPS) / BPS;
+        profitCents = revenueCents > agronomicCostCents ? revenueCents - agronomicCostCents : 0;
+        farmerCents = (profitCents * farmerShareBps) / BPS;
         partnerCents = profitCents - farmerCents;
     }
 
     function settle(SettlementInput calldata input) external nonReentrant onlyRole(SETTLEMENT_OPERATOR_ROLE) {
         require(!settled[input.partnershipId], "already settled");
+        require(input.evidenceHash != bytes32(0), "evidence required");
         address farmer = registry.farmerOf(input.partnershipId);
         address partner = registry.partnerOf(input.partnershipId);
         require(farmer != address(0) && partner != address(0), "bad partnership");
@@ -1294,6 +1550,8 @@ contract SettlementDistributor is AccessControl, ReentrancyGuard {
     }
 }
 ```
+
+> **Price authority decision:** `SettlementInput` intentionally excludes price, cost basis, yield cap, and share split. Those values come from the onchain partnership snapshot created by `PartnershipFactory.openPartnership`, so an operator cannot substitute settlement economics at execution time.
 
 ### 9.3 Settlement Intent Mutation
 
@@ -1321,15 +1579,13 @@ export const createSettlementIntent = mutation({
     if (!partnership || partnership.status !== "awaiting_settlement") {
       throw new Error("Partnership is not ready for settlement");
     }
-    const plan = await ctx.db.get(partnership.planId);
-    if (!plan) throw new Error("Plan missing");
 
     const preview = computePreview({
       yieldTenthsQQ: args.yieldTenthsQQ,
-      priceCentsPerLb: plan.priceCentsPerLb,
-      agronomicCostCents: plan.agronomicCostCents,
-      yieldCapTenthsQQ: plan.yieldCapY1TenthsQQ,
-      splitFarmerBps: plan.splitFarmerBps,
+      fixedPriceCentsPerLb: partnership.fixedPriceCentsPerLb,
+      agronomicCostCents: partnership.agronomicCostCents,
+      yieldCapTenthsQQ: partnership.yieldCapY1TenthsQQ,
+      farmerShareBps: partnership.farmerShareBps,
     });
 
     const now = Date.now();
@@ -1339,7 +1595,11 @@ export const createSettlementIntent = mutation({
       year: 1,
       yieldTenthsQQ: args.yieldTenthsQQ,
       scaScoreTenths: args.scaScoreTenths,
-      priceCentsPerLb: plan.priceCentsPerLb,
+      fixedPriceCentsPerLb: partnership.fixedPriceCentsPerLb,
+      priceFloorCentsPerLb: partnership.priceFloorCentsPerLb,
+      agronomicCostCents: partnership.agronomicCostCents,
+      yieldCapY1TenthsQQ: partnership.yieldCapY1TenthsQQ,
+      farmerShareBps: partnership.farmerShareBps,
       revenueCents: preview.revenueCents,
       profitCents: preview.profitCents,
       farmerCents: preview.farmerCents,
@@ -1391,12 +1651,7 @@ const role = v.union(
   v.literal("auditor"),
 );
 
-const chainKey = v.union(
-  v.literal("hardhat"),
-  v.literal("celoSepolia"),
-  v.literal("baseSepolia"),
-  v.literal("polygonAmoy"),
-);
+const chainKey = v.literal("hardhat");
 
 export default defineSchema({
   users: defineTable({
@@ -1466,6 +1721,8 @@ export default defineSchema({
     ),
     activePlanId: v.optional(v.id("plans")),
     onchainLotId: v.optional(v.number()),
+    lotTermsTxHash: v.optional(v.string()),
+    lotTermsSyncedAt: v.optional(v.number()),
     createdAt: v.number(),
     updatedAt: v.number(),
   })
@@ -1490,12 +1747,12 @@ export default defineSchema({
     contingencyCents: v.number(),
     platformFeeCents: v.number(),
     workingCapitalCents: v.number(),
-    priceCentsPerLb: v.number(),
+    fixedPriceCentsPerLb: v.number(),
     priceFloorCentsPerLb: v.number(),
     yieldCapY1TenthsQQ: v.number(),
     projectedYieldY1TenthsQQ: v.number(),
-    splitFarmerBps: v.number(),
-    splitPartnerBps: v.number(),
+    farmerShareBps: v.number(),
+    partnerShareBps: v.number(),
     phygitalCoffeeLb: v.number(),
     phygitalDeliveryMonth: v.string(),
     createdAt: v.number(),
@@ -1534,6 +1791,11 @@ export default defineSchema({
     profitCents: v.number(),
     farmerCents: v.number(),
     partnerCents: v.number(),
+    fixedPriceCentsPerLb: v.number(),
+    priceFloorCentsPerLb: v.number(),
+    agronomicCostCents: v.number(),
+    yieldCapY1TenthsQQ: v.number(),
+    farmerShareBps: v.number(),
     proposalHash: v.string(),
     typedDataSignature: v.optional(v.string()),
     approvalTxHash: v.optional(v.string()),
@@ -1552,6 +1814,11 @@ export default defineSchema({
     partnerUserId: v.id("users"),
     partnerWallet: v.string(),
     farmerWallet: v.string(),
+    fixedPriceCentsPerLb: v.number(),
+    priceFloorCentsPerLb: v.number(),
+    agronomicCostCents: v.number(),
+    yieldCapY1TenthsQQ: v.number(),
+    farmerShareBps: v.number(),
     status: v.union(
       v.literal("active"),
       v.literal("milestones_attested"),
@@ -1584,7 +1851,6 @@ export default defineSchema({
     artifactHash: v.string(),
     attesterUserId: v.id("users"),
     attesterRole: role,
-    easUid: v.optional(v.string()),
     registryTxHash: v.optional(v.string()),
     status: v.union(
       v.literal("recorded"),
@@ -1604,6 +1870,7 @@ export default defineSchema({
 
   agentEvents: defineTable({
     proposalId: v.id("proposals"),
+    threadId: v.optional(v.string()),
     eventType: v.union(
       v.literal("explanation_start"),
       v.literal("explanation_complete"),
@@ -1614,6 +1881,28 @@ export default defineSchema({
     text: v.string(),
     createdAt: v.number(),
   }).index("by_proposalId_and_createdAt", ["proposalId", "createdAt"]),
+
+  referenceDataSnapshots: defineTable({
+    lotCode: v.string(),
+    kind: v.union(
+      v.literal("native_usd"),
+      v.literal("coffee_spot"),
+      v.literal("backend_health"),
+    ),
+    source: v.union(
+      v.literal("backend_api"),
+      v.literal("chainlink_reference"),
+      v.literal("cached_fixture"),
+      v.literal("seeded_fixture"),
+    ),
+    value: v.string(),
+    unit: v.string(),
+    fetchedAt: v.number(),
+    expiresAt: v.number(),
+    createdAt: v.number(),
+  })
+    .index("by_lotCode_and_kind", ["lotCode", "kind"])
+    .index("by_kind_and_fetchedAt", ["kind", "fetchedAt"]),
 
   settlements: defineTable({
     partnershipId: v.id("partnerships"),
@@ -1627,7 +1916,11 @@ export default defineSchema({
     year: v.number(),
     yieldTenthsQQ: v.number(),
     scaScoreTenths: v.number(),
-    priceCentsPerLb: v.number(),
+    fixedPriceCentsPerLb: v.number(),
+    priceFloorCentsPerLb: v.number(),
+    agronomicCostCents: v.number(),
+    yieldCapY1TenthsQQ: v.number(),
+    farmerShareBps: v.number(),
     revenueCents: v.number(),
     profitCents: v.number(),
     farmerCents: v.number(),
@@ -1647,6 +1940,7 @@ export default defineSchema({
     chainKey,
     type: v.union(
       v.literal("deploy"),
+      v.literal("configure_lot_terms"),
       v.literal("mock_usdc_approval"),
       v.literal("open_partnership"),
       v.literal("evidence_attestation"),
@@ -1660,6 +1954,7 @@ export default defineSchema({
       v.literal("unknown"),
     ),
     submittedByWallet: v.optional(v.string()),
+    relatedLotId: v.optional(v.id("lots")),
     relatedProposalId: v.optional(v.id("proposals")),
     relatedPartnershipId: v.optional(v.id("partnerships")),
     relatedSettlementId: v.optional(v.id("settlements")),
@@ -1680,7 +1975,13 @@ export default defineSchema({
     deployTxHash: v.string(),
     active: v.boolean(),
     createdAt: v.number(),
-  }).index("by_chainKey_and_contractName", ["chainKey", "contractName"]),
+  })
+    .index("by_chainKey_and_contractName", ["chainKey", "contractName"])
+    .index("by_chainKey_and_contractName_and_active", [
+      "chainKey",
+      "contractName",
+      "active",
+    ]),
 });
 ```
 
@@ -1693,7 +1994,7 @@ packages/hardhat/
 +-- contracts/
 |   +-- MockUSDC.sol                  # NEW - 6-decimal demo stablecoin
 |   +-- LotCertificate.sol            # NEW - non-transferable ERC-721 certificate
-|   +-- PartnershipFactory.sol        # NEW - lot terms, deposits, partnership registry
+|   +-- PartnershipFactory.sol        # NEW - lot terms, economics snapshots, partnership registry
 |   +-- EvidenceRegistry.sol          # NEW - attestation-compatible evidence events
 |   +-- SettlementDistributor.sol     # NEW - exact settlement math and transfers
 |   +-- YourContract.sol              # EXISTING scaffold example; remove or ignore after Harvverse contracts land
@@ -1703,9 +2004,9 @@ packages/hardhat/
 |   +-- 02_configure_harvverse_lot.ts # NEW - grant roles and configure first lot terms
 +-- test/
 |   +-- LotCertificate.ts             # NEW - non-transferability and mint role
-|   +-- PartnershipFactory.ts         # NEW - proposal hash, transferFrom, duplicate prevention
+|   +-- PartnershipFactory.ts         # NEW - economics hash, snapshots, transferFrom, duplicate prevention
 |   +-- EvidenceRegistry.ts           # NEW - attester role
-|   +-- SettlementDistributor.ts      # NEW - exact cents, underfunding, duplicate settlement
+|   +-- SettlementDistributor.ts      # NEW - snapshotted economics, exact cents, underfunding, duplicate settlement
 ```
 
 ### 11.1 Deployment Notes
@@ -1714,6 +2015,7 @@ packages/hardhat/
 - Use tags for scoped deploys, e.g. `deployHarvverseCore.tags = ["HarvverseCore"]`.
 - Post-deploy role grants and lot configuration should estimate gas at the call site and add margin.
 - Do not change global `blockGasLimit` to work around a single admin call.
+- After `LotTermsConfigured` confirms, Convex must patch the lot with `onchainLotId`, `lotTermsTxHash`, and `lotTermsSyncedAt`; proposal creation remains blocked until this mirror exists.
 
 ```typescript
 // Path: packages/hardhat/deploy/02_configure_harvverse_lot.ts
@@ -1725,12 +2027,20 @@ const configureHarvverseLot: DeployFunction = async function (
 ) {
   const { deployer } = await hre.getNamedAccounts();
   const factory = await hre.ethers.getContract("PartnershipFactory", deployer);
+  const economics = {
+    fixedPriceCentsPerLb: 350n,
+    priceFloorCentsPerLb: 250n,
+    agronomicCostCents: 149_000n,
+    yieldCapY1TenthsQQ: 80n,
+    farmerShareBps: 6000,
+  } as const;
 
   const args = [
     1n,
     342_500n * 10_000n,
     process.env.DEMO_FARMER_WALLET!,
     process.env.DEMO_PLAN_HASH!,
+    economics,
   ] as const;
 
   const gas = await factory.configureLotTerms.estimateGas(...args);
@@ -1741,7 +2051,17 @@ export default configureHarvverseLot;
 configureHarvverseLot.tags = ["HarvverseLotConfig"];
 ```
 
-### 11.2 Generated ABI Expectations
+### 11.2 Required Contract Tests
+
+- `configureLotTerms` stores and emits `fixedPriceCentsPerLb = 350` with the rest of the economic fields.
+- `expectedProposalHash` changes when any economic field changes.
+- `openPartnership` snapshots economics by `partnershipId`.
+- Reconfiguring lot terms after opening does not alter an existing partnership's settlement economics.
+- `SettlementDistributor.preview` and `settle` use the snapshotted onchain economics and never accept price or cost basis from calldata.
+- A fixture with `yieldTenthsQQ = 60`, `fixedPriceCentsPerLb = 350`, and `agronomicCostCents = 149_000` produces exact expected cents outputs.
+- Duplicate proposal hashes, duplicate settlements, invalid evidence hashes, and underfunded settlement pool transfers fail predictably.
+
+### 11.3 Generated ABI Expectations
 
 | Contract                | Frontend Contract Name    | Required Hook Usage                                                                                         |
 | ----------------------- | ------------------------- | ----------------------------------------------------------------------------------------------------------- |
@@ -1757,18 +2077,22 @@ configureHarvverseLot.tags = ["HarvverseLotConfig"];
 
 ```text
 convex/
++-- convex.config.ts                      # NEW - install @convex-dev/agent component
 +-- schema.ts                              # NEW - tables and indexes from section 10
 +-- auth/
 |   +-- sessions.ts                        # NEW - wallet nonce/session lifecycle
 |   +-- guards.ts                          # NEW - requireWalletSession and requireRole helpers
 +-- admin/
 |   +-- seed.ts                            # NEW - seed lot, plan, custody account, milestones
-|   +-- deployments.ts                     # NEW - register/read active deployments
+|   +-- deployments.ts                     # NEW - register/read active deployments and lot-term sync
 |   +-- settlements.ts                     # NEW - settlement intents and status
 |   +-- demoFlags.ts                       # NEW - fallback and compressed-time controls
 +-- agent/
-|   +-- explainProposal.ts                 # NEW - public LLM/fallback action
-|   +-- internal.ts                        # NEW - internal proposal reads and agent event writes
+|   +-- explainProposal.ts                 # NEW - Convex Agent/fallback action
+|   +-- internal.ts                        # NEW - internal proposal reads, agent event writes, thread ownership checks
++-- referenceData/
+|   +-- market.ts                          # NEW - direct backend reference data + cached fixture fallback
+|   +-- internal.ts                        # NEW - cache reference snapshots from actions
 +-- partner/
 |   +-- lots.ts                            # NEW - public lot queries
 |   +-- proposals.ts                       # NEW - proposal lifecycle
@@ -1781,7 +2105,7 @@ convex/
 +-- model/
 |   +-- finance.ts                         # NEW - deterministic math
 |   +-- proposalHash.ts                    # NEW - hash parity with Solidity
-+-- http.ts                                # NEW - optional metadata endpoint only
++-- http.ts                                # NEW - optional metadata/reference endpoint only
 +-- crons.ts                               # NEW - proposal expiry and tx sync
 ```
 
@@ -1795,10 +2119,14 @@ convex/
 | `auth/sessions.ts`         | `expireSession`            | `internalMutation` | `{ sessionIdHash: v.string() }`                                                     |
 | `admin/seed.ts`            | `seedFirstLot`             | `mutation`         | `{ sessionId, planHash, sourceUri, farmerWallet, escrowWallet }` as strings         |
 | `admin/deployments.ts`     | `registerDeployment`       | `mutation`         | `{ sessionId, chainKey, chainId, contractName, address, abiHash, deployTxHash }`    |
+| `admin/deployments.ts`     | `registerLotTermsConfigured` | `mutation`       | `{ sessionId, lotCode, onchainLotId, lotTermsTxHash }`                              |
 | `admin/settlements.ts`     | `createSettlementIntent`   | `mutation`         | `{ sessionId, partnershipId, yieldTenthsQQ, scaScoreTenths, harvestEvidenceHash }`  |
 | `agent/explainProposal.ts` | `explainProposal`          | `action`           | `{ sessionId: v.string(), proposalId: v.id("proposals") }`                          |
 | `agent/internal.ts`        | `readProposalFacts`        | `internalQuery`    | `{ sessionId: v.string(), proposalId: v.id("proposals") }`                          |
-| `agent/internal.ts`        | `appendAgentEvent`         | `internalMutation` | `{ proposalId: v.id("proposals"), eventType, text: v.string() }`                    |
+| `agent/internal.ts`        | `appendAgentEvent`         | `internalMutation` | `{ proposalId: v.id("proposals"), eventType, threadId?, text: v.string() }`         |
+| `referenceData/market.ts`  | `getMarketReferences`      | `action`           | `{ sessionId: v.optional(v.string()), lotCode: v.string() }`                        |
+| `referenceData/market.ts`  | `readCachedReferences`     | `query`            | `{ lotCode: v.string() }`                                                           |
+| `referenceData/internal.ts`| `cacheReferenceSnapshot`   | `internalMutation` | `{ lotCode: v.string(), payload: v.any() }`                                         |
 | `partner/lots.ts`          | `listPublishedLots`        | `query`            | `{}`                                                                                |
 | `partner/lots.ts`          | `getLotDetail`             | `query`            | `{ lotCode: v.string() }`                                                           |
 | `partner/proposals.ts`     | `createProposal`           | `mutation`         | `{ sessionId: v.string(), lotCode: v.string() }`                                    |
@@ -1807,7 +2135,13 @@ convex/
 | `chain/transactions.ts`    | `recordSubmitted`          | `mutation`         | `{ sessionId, txHash, txType, proposalId?, partnershipId?, settlementId? }`         |
 | `chain/events.ts`          | `syncSubmittedTransaction` | `internalAction`   | `{ transactionId: v.id("chainTransactions") }`                                      |
 
-> **Convex decision:** Public functions always include validators and role/session checks. Sensitive orchestration uses `internalQuery`, `internalMutation`, and `internalAction`; do not expose reconciliation internals as public `action`s.
+> **Convex guidelines decision:** `convex/_generated/ai/guidelines.md` is the first implementation reference for all Convex code in this plan. Public functions always include validators and role/session checks. Sensitive orchestration uses `internalQuery`, `internalMutation`, and `internalAction`; do not expose reconciliation internals or Agent component internals as public actions. Queries must use named indexes instead of `.filter`, return bounded collections, and avoid `.collect().length`.
+
+> **Lot-term sync decision:** `registerLotTermsConfigured` records the local transaction hash for reconciliation. The internal event-sync path must verify the emitted `LotTermsConfigured` economics against the active plan before setting `lotTermsSyncedAt`; a client or admin-supplied tx hash alone is not proof.
+
+> **Agent component decision:** Use the packaged `@convex-dev/agent` component installed through `convex/convex.config.ts`. Keep Harvverse authorization, environment variables, prompt construction, and client-facing wrappers in app functions. The component stores and manages agent threads/messages; the app passes only locked proposal facts and allowlisted tool results across the boundary.
+
+> **Reference-data decision:** The UI may display backend or optional Chainlink reference values that replace the "oracle" language from the demo mockups. These values come through Convex `referenceData` functions and cached fixtures. They are display provenance only and never feed proposal hashes or contract settlement.
 
 ---
 
@@ -1934,9 +2268,9 @@ export async function POST(req: NextRequest) {
 | Secret                   | Location                                      | Rule                                                                                               |
 | ------------------------ | --------------------------------------------- | -------------------------------------------------------------------------------------------------- |
 | LLM provider key         | Convex env                                    | Server-only; not exposed to Next client.                                                           |
-| Coffee/reference API key | Convex env                                    | Optional; fallback-safe.                                                                           |
-| RPC provider keys        | Convex env or `.env.local` depending on use   | Public client keys may be public only when provider terms allow it; private keys stay server-side. |
-| `IRON_SESSION_SECRET`    | Next deployment env                           | Required if SIWE cookie session uses `iron-session`.                                               |
+| Coffee/reference API key | Convex env                                    | Optional only if the backend reference endpoint requires it; fallback-safe.                        |
+| RPC provider keys        | Not required for MVP                          | Local Hardhat RPC is used for MVP; public RPC keys are post-MVP adapter work.                     |
+| `IRON_SESSION_SECRET`    | `.env.local` / Next runtime env               | Required if SIWE cookie session uses `iron-session`.                                               |
 | Deployer key             | Hardhat local encrypted/imported account flow | Deployment only; not used by Convex runtime.                                                       |
 
 ### 14.3 Role-Based Data Access
@@ -1960,14 +2294,16 @@ export async function POST(req: NextRequest) {
 - Make `LotCertificate` non-transferable.
 - Prevent duplicate proposal hashes and duplicate settlement.
 - Settlement verifies recipients from `PartnershipFactory`, not operator-supplied addresses.
+- Proposal hashes include plan economics, not only ticket and wallet fields.
+- Settlement calldata excludes price, cost basis, yield cap, and share split; the contract reads snapshotted onchain economics.
 - Use exact-cent math; display rounding is UI-only.
-- Label `MockUSDC` visibly as testnet demo currency.
+- Label `MockUSDC` visibly as local demo currency.
 
 ### 14.5 Demo and Legal Boundaries
 
 Use:
 
-- "testnet demo"
+- "local demo"
 - "demo MockUSDC"
 - "deterministic settlement example"
 - "not an offer, not financial advice"
@@ -1988,36 +2324,38 @@ Avoid:
 | Edge Case                      | Detection                                                     | Recovery                                                            | User-Facing Behavior                            |
 | ------------------------------ | ------------------------------------------------------------- | ------------------------------------------------------------------- | ----------------------------------------------- |
 | Wrong chain                    | wagmi chain differs from `scaffold.config.ts` target          | Prompt switch / disable action                                      | Button disabled with active chain label.        |
-| Missing MockUSDC balance       | `balanceOf(partner) < ticket`                                 | Faucet or admin mint in testnet                                     | Show "Get demo USDC" action.                    |
+| Missing MockUSDC balance       | `balanceOf(partner) < ticket`                                 | Admin mint or scripted local funding                                | Show "Get demo USDC" action.                    |
 | Approval missing               | `allowance < ticket`                                          | Show approval step before partnership                               | "Approve demo USDC" then "Confirm partnership". |
 | Wallet signature rejected      | Wallet error / user rejection                                 | Keep proposal pending until TTL                                     | Toast with parsed wallet error.                 |
 | Proposal expired               | `Date.now() > expiresAt`                                      | Create a new proposal and hash                                      | Proposal page reloads with new terms hash.      |
-| Duplicate proposal tx          | Proposal not `pending` or hash already opened                 | Reconcile existing tx                                               | Disable button and show explorer link.          |
-| Submitted tx mismatches intent | Receipt/log sender, hash, amount, contract, or chain mismatch | Mark transaction `unknown` or `reverted`; leave proposal unresolved | Warning banner with explorer link.              |
+| Lot economics changed after proposal | Contract `expectedProposalHash` no longer matches stored proposal hash | Expire proposal and create a new one from current onchain terms | UI explains terms changed before signing.       |
+| Duplicate proposal tx          | Proposal not `pending` or hash already opened                 | Reconcile existing tx                                               | Disable button and show local tx details.       |
+| Submitted tx mismatches intent | Receipt/log sender, hash, amount, contract, or chain mismatch | Mark transaction `unknown` or `reverted`; leave proposal unresolved | Warning banner with local tx details.           |
 | Convex write fails after tx    | Tx mined but mutation fails                                   | Event sync recovers by tx hash / logs                               | UI can recover after refresh.                   |
-| AI timeout or disallowed claim | Action timeout or schema/claim guard failure                  | Use deterministic fallback text                                     | Explanation still appears; no blocker.          |
-| EAS unavailable                | Missing deployment or SDK failure                             | Use local `EvidenceRegistry`                                        | Label as local registry attestation.            |
+| Agent timeout or disallowed claim | Action timeout, provider failure, or schema/claim guard failure | Use deterministic fallback text                                  | Explanation still appears; no blocker.          |
+| Backend reference data unavailable | API timeout or stale cache                                 | Use seeded reference fixtures                                      | Toast labels value as cached local reference.   |
+| Convex economics mirror missing | Partnership row lacks fields reconciled from contract snapshot | Block settlement intent until event/read reconciliation completes | Admin page shows "sync onchain terms" action.   |
 | Settlement pool underfunded    | Contract balance below required payout                        | Block settlement; request funding                                   | Custody page shows exact shortfall.             |
 | Operator lacks role            | Simulation/revert access-control error                        | Grant role or switch wallet                                         | Admin page shows expected role/wallet.          |
 | Negative profit                | `revenue <= cost`                                             | Set profit and payouts to zero                                      | UI explains no profit-share payout.             |
 | Yield above cap                | Input yield exceeds cap                                       | Contract caps effective yield                                       | UI shows actual vs contract-effective yield.    |
-| Wallet NFT not displayed       | Wallet cache / testnet metadata issue                         | Use app certificate and explorer events                             | Do not depend on wallet NFT rendering for demo. |
+| Wallet NFT not displayed       | Wallet cache / local metadata issue                           | Use app certificate and decoded local events                        | Do not depend on wallet NFT rendering for demo. |
 
 ---
 
 ## 16. Open Questions
 
-| #   | Question                                                                         | Current Thinking                                                                                                                                 |
-| --- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1   | Which public testnet is final?                                                   | Default to Celo Sepolia because it is already in Hardhat config and matches the product story. Use Base Sepolia if EAS support becomes critical. |
-| 2   | Is EAS required for the judging criteria?                                        | Assume no. Use `EvidenceRegistry` for MVP and keep schema names compatible with a later EAS migration.                                           |
-| 3   | Should SIWE be cookie-only or integrated into Convex Auth/JWT?                   | MVP can use SIWE + server session + Convex `walletSessions`; production should evaluate Convex Auth/JWT through `convex-setup-auth`.             |
-| 4   | Is the platform fee 10% of ticket or 10% of funded plan budget plus contingency? | Current math supports budget-plus-contingency, not total ticket. Fix copy or change amount.                                                      |
-| 5   | Is the R2 floor a real guarantee?                                                | No until a reserve, insurance policy, or legal obligation is funded and documented.                                                              |
-| 6   | Should the Partner see one or two wallet prompts?                                | Two honest prompts are acceptable. If one prompt is needed, pre-approve during rehearsal and disclose it as demo setup.                          |
-| 7   | Should Chainlink Functions be implemented?                                       | Defer unless sponsor criteria require it. It should not control MVP settlement.                                                                  |
-| 8   | Should `LotCertificate` be transferable?                                         | No. Keep it non-transferable for MVP.                                                                                                            |
-| 9   | Where do settlement funds come from in production?                               | Demo uses pre-funded MockUSDC settlement pool. Production requires off-chain buyer/offtaker proceeds or fiduciary settlement account.            |
+| #   | Question                                                                         | Current Thinking                                                                                                                      |
+| --- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Should public testnet deployment be a post-MVP adapter?                          | Yes. Stabilize the local experience first; then add Celo/Base/other testnet support only when the local flow is reliable.             |
+| 2   | Is EAS required for the judging criteria?                                        | No for MVP. Use local `EvidenceRegistry` and keep event/schema names compatible with a later EAS migration.                           |
+| 3   | Should SIWE be cookie-only or integrated into Convex Auth/JWT?                   | MVP can use SIWE + server session + Convex `walletSessions`; production should evaluate Convex Auth/JWT through `convex-setup-auth`. |
+| 4   | Is the platform fee 10% of ticket or 10% of funded plan budget plus contingency? | Current math supports budget-plus-contingency, not total ticket. Fix copy or change amount.                                           |
+| 5   | Is the R2 floor a real guarantee?                                                | No until a reserve, insurance policy, or legal obligation is funded and documented.                                                   |
+| 6   | Should the Partner see one or two wallet prompts?                                | Two honest prompts are acceptable. If one prompt is needed, pre-approve during rehearsal and disclose it as demo setup.               |
+| 7   | Should optional Chainlink/reference proof be implemented for coffee/native values? | Use a Convex-owned cached fixture first. If sponsor criteria require Chainlink, isolate it as display-only reference data.            |
+| 8   | Should `LotCertificate` be transferable?                                         | No. Keep it non-transferable for MVP.                                                                                                 |
+| 9   | Where do settlement funds come from in production?                               | Demo uses pre-funded MockUSDC settlement pool. Production requires off-chain buyer/offtaker proceeds or fiduciary settlement account. |
 
 ---
 
@@ -2025,12 +2363,12 @@ Avoid:
 
 ### 17.1 New Packages
 
-| Package                                       | Why                                                                            | Runtime            | Install Command                                                               |
-| --------------------------------------------- | ------------------------------------------------------------------------------ | ------------------ | ----------------------------------------------------------------------------- |
-| `iron-session`                                | Optional HTTP-only SIWE session cookie for Next.js route handlers              | Next.js            | `pnpm --filter @se-2/nextjs add iron-session`                                 |
-| `@chainlink/contracts`                        | Optional Chainlink interfaces if Functions/Data Feed contracts are implemented | Hardhat            | `pnpm --filter @se-2/hardhat add @chainlink/contracts`                        |
-| `@ethereum-attestation-service/eas-sdk`       | Optional EAS client if native EAS is used instead of local registry            | Convex/Node action | `pnpm add -w @ethereum-attestation-service/eas-sdk`                           |
-| `@ethereum-attestation-service/eas-contracts` | Optional local EAS contract imports/deployment                                 | Hardhat            | `pnpm --filter @se-2/hardhat add @ethereum-attestation-service/eas-contracts` |
+| Package             | Why                                                               | Runtime       | Install Command                                   |
+| ------------------- | ----------------------------------------------------------------- | ------------- | ------------------------------------------------- |
+| `@convex-dev/agent` | Convex Agent component for persisted threads/messages and Agent API | Convex        | `pnpm add -w @convex-dev/agent`                   |
+| `ai`                | AI SDK core used by the Convex Agent model adapter                | Convex action | `pnpm add -w ai`                                  |
+| `@ai-sdk/openai`    | LLM provider adapter for the Agent component                      | Convex action | `pnpm add -w @ai-sdk/openai`                      |
+| `iron-session`      | Optional HTTP-only SIWE session cookie for Next.js route handlers | Next.js       | `pnpm --filter @se-2/nextjs add iron-session`     |
 
 Do not install `siwe`. Use `viem/siwe`, already available through the installed `viem` package.
 
@@ -2057,33 +2395,29 @@ Do not install `siwe`. Use `viem/siwe`, already available through the installed 
 
 | Variable                                | Where Set                            | Used By                                                                                    |
 | --------------------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------ |
-| `NEXT_PUBLIC_CONVEX_URL`                | `.env.local` / Vercel                | Convex React client.                                                                       |
-| `NEXT_PUBLIC_ACTIVE_CHAIN_KEY`          | `.env.local` / Vercel                | Selects `hardhat`, `celoSepolia`, `baseSepolia`, or `polygonAmoy` in `scaffold.config.ts`. |
-| `NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID` | `.env.local` / Vercel                | Existing RainbowKit config key.                                                            |
-| `NEXT_PUBLIC_ALCHEMY_API_KEY`           | `.env.local` / Vercel                | Existing SE-2 frontend RPC helper.                                                         |
-| `NEXT_PUBLIC_CELO_SEPOLIA_RPC_URL`      | `.env.local` / Vercel                | Optional frontend RPC override.                                                            |
-| `ALCHEMY_API_KEY`                       | `packages/hardhat/.env`              | Existing Hardhat RPC config.                                                               |
-| `ETHERSCAN_V2_API_KEY`                  | `packages/hardhat/.env`              | Existing Hardhat verify config.                                                            |
+| `NEXT_PUBLIC_CONVEX_URL`                | `.env.local`                         | Convex React client.                                                                       |
+| `NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID` | `.env.local`                         | Existing RainbowKit config key.                                                            |
+| `NEXT_PUBLIC_ALCHEMY_API_KEY`           | Existing `.env.local` if present     | Not required for local MVP; leave existing SE-2 fallback alone.                             |
+| `ALCHEMY_API_KEY`                       | Existing `packages/hardhat/.env` if present | Not required for local MVP.                                                           |
+| `ETHERSCAN_V2_API_KEY`                  | Existing `packages/hardhat/.env` if present | Not required for local MVP.                                                           |
 | `DEMO_FARMER_WALLET`                    | `packages/hardhat/.env` / deploy env | Lot configuration deploy script.                                                           |
 | `DEMO_PLAN_HASH`                        | `packages/hardhat/.env` / deploy env | Lot configuration deploy script.                                                           |
-| `IRON_SESSION_SECRET`                   | Next deployment env                  | Optional SIWE session cookie.                                                              |
-| `LLM_API_KEY`                           | Convex env                           | Optional AI explanation action.                                                            |
-| `COFFEE_PRICE_API_KEY`                  | Convex env                           | Optional market reference fetch.                                                           |
-| `HTTP_ACTION_HMAC_SECRET`               | Convex env                           | Optional webhook security.                                                                 |
-| `EAS_CONTRACT_ADDRESS`                  | Convex env                           | Optional EAS integration.                                                                  |
+| `IRON_SESSION_SECRET`                   | `.env.local` / Next runtime env      | Optional SIWE session cookie.                                                              |
+| `OPENAI_API_KEY`                        | Convex env                           | Optional Convex Agent generation; deterministic fallback must work without it.              |
+| `COFFEE_REFERENCE_API_URL`              | Convex env                           | Optional Harvverse or Chainlink/reference endpoint; seeded fixture must work without it.    |
+| `COFFEE_REFERENCE_API_KEY`              | Convex env                           | Optional backend reference API key.                                                         |
 
 No Partner, Farmer, Admin, Settlement Operator, Custodian, or FI Escrow private key belongs in Convex env or checked-in files.
 
-### 17.4 External Service Configuration
+### 17.4 Runtime Service Configuration
 
-| Service                     | Required?              | Configuration                                                                      |
-| --------------------------- | ---------------------- | ---------------------------------------------------------------------------------- |
-| Convex deployment           | Yes                    | `NEXT_PUBLIC_CONVEX_URL`, Convex env vars, generated API committed as appropriate. |
-| Testnet faucet              | Yes for public testnet | Fund deployer, partner, admin/operator, and custodian wallets.                     |
-| Block explorer verification | Yes for public testnet | Run `pnpm verify --network <network>` after deployment.                            |
-| LLM provider                | Optional with fallback | Configure `LLM_API_KEY`; deterministic fallback must work without it.              |
-| Chainlink subscription      | Optional P2            | Required only if Chainlink Functions is promoted into MVP.                         |
-| EAS schema registration     | Optional P2            | Required only if EAS replaces local `EvidenceRegistry`.                            |
+| Service                         | Required?              | Configuration                                                                 |
+| ------------------------------- | ---------------------- | ----------------------------------------------------------------------------- |
+| Local Hardhat node              | Yes                    | `pnpm chain`; deterministic accounts, local RPC, local tx hashes.             |
+| Dedicated Convex development backend | Yes               | `NEXT_PUBLIC_CONVEX_URL`, Convex env vars, generated API committed as appropriate. |
+| Convex Agent component          | Yes for Agent UX       | `@convex-dev/agent`, `convex/convex.config.ts`, `npx convex dev` codegen.     |
+| LLM provider                    | Optional with fallback | Configure `OPENAI_API_KEY`; deterministic fallback must work without it.      |
+| Harvverse/Chainlink reference-data backend | Optional with fallback | Configure `COFFEE_REFERENCE_API_URL`; seeded fixture must work without it.     |
 
 ---
 

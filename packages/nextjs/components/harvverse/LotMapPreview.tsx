@@ -6,109 +6,112 @@ type LotMapPreviewProps = {
   className?: string;
 };
 
+/**
+ * LotMapPreview — stylized topographic SVG "satellite" preview of a lot.
+ * Pure SVG so it scales sharp; uses a deterministic seed from the lot code
+ * to vary contour shape across lots.
+ */
 export const LotMapPreview = ({ lotCode, hectares, altitude, coordinates, className }: LotMapPreviewProps) => {
+  const seed = lotCode.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
+  const wobble = (n: number) => ((seed * 9301 + n * 49297) % 233280) / 233280;
+
   return (
-    <div className={`relative overflow-hidden rounded-xl border border-white/8 bg-[#06110f] ${className ?? ""}`}>
-      <svg viewBox="0 0 400 240" className="block h-full w-full" aria-hidden>
+    <div className={`relative overflow-hidden bg-[color:var(--color-ink-2)] ${className ?? ""}`}>
+      <svg
+        viewBox="0 0 600 360"
+        preserveAspectRatio="xMidYMid slice"
+        className="absolute inset-0 h-full w-full"
+        aria-hidden
+      >
         <defs>
-          <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#1a3c33" />
-            <stop offset="100%" stopColor="#284f43" />
+          <linearGradient id={`map-${lotCode}-bg`} x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#1a1612" />
+            <stop offset="100%" stopColor="#0a0908" />
           </linearGradient>
-          <linearGradient id="hillGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#2d5d46" />
-            <stop offset="100%" stopColor="#17372d" />
-          </linearGradient>
-          <linearGradient id="fieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#4f8a58" />
-            <stop offset="100%" stopColor="#2f6640" />
-          </linearGradient>
-          <linearGradient id="pathGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#c8a96b" stopOpacity="0.75" />
-            <stop offset="100%" stopColor="#8d6f3d" stopOpacity="0.55" />
-          </linearGradient>
-          <radialGradient id="sunGlow" cx="78%" cy="18%" r="32%">
-            <stop offset="0%" stopColor="#e8dfb4" stopOpacity="0.65" />
-            <stop offset="100%" stopColor="#e8dfb4" stopOpacity="0" />
-          </radialGradient>
         </defs>
+        <rect x="0" y="0" width="600" height="360" fill={`url(#map-${lotCode}-bg)`} />
 
-        <rect width="400" height="240" fill="url(#skyGrad)" />
-        <rect width="400" height="240" fill="url(#sunGlow)" />
-
-        {/* Hills and horizon */}
-        <path
-          d="M0 128 C40 92 108 98 158 124 C208 150 276 138 336 108 C360 96 380 96 400 102 L400 240 L0 240 Z"
-          fill="url(#hillGrad)"
-        />
-        <path
-          d="M0 150 C42 120 96 124 150 152 C202 180 272 178 322 150 C352 134 376 128 400 132 L400 240 L0 240 Z"
-          fill="#234a3a"
-        />
-        <path
-          d="M0 170 C46 148 96 154 146 178 C198 202 270 204 324 182 C354 170 378 166 400 170 L400 240 L0 240 Z"
-          fill="#1c3f33"
-        />
-
-        {/* Farm fields */}
-        <g opacity="0.95">
-          <path d="M18 173 L152 154 L166 176 L26 196 Z" fill="url(#fieldGrad)" />
-          <path d="M168 176 L292 159 L309 181 L179 201 Z" fill="url(#fieldGrad)" />
-          <path d="M36 197 L174 177 L188 199 L44 220 Z" fill="#3f764c" />
-          <path d="M194 202 L332 182 L346 204 L204 225 Z" fill="#3b7247" />
+        {/* topographic ovals */}
+        <g stroke="#9bc26c" fill="none">
+          {Array.from({ length: 9 }).map((_, i) => (
+            <ellipse
+              key={i}
+              cx={260 + wobble(i) * 60}
+              cy={210 + wobble(i + 3) * 30}
+              rx={40 + i * 22}
+              ry={20 + i * 9}
+              strokeWidth={i % 3 === 0 ? "0.9" : "0.4"}
+              strokeOpacity={i % 3 === 0 ? "0.55" : "0.3"}
+              transform={`rotate(${-12 + wobble(i) * 24} ${260 + wobble(i) * 60} ${210 + wobble(i + 3) * 30})`}
+            />
+          ))}
         </g>
 
-        {/* Field rows */}
-        <g stroke="#b7dfbd" strokeOpacity="0.35" strokeWidth="0.8">
-          <line x1="34" y1="183" x2="160" y2="166" />
-          <line x1="50" y1="189" x2="174" y2="172" />
-          <line x1="66" y1="195" x2="188" y2="178" />
-          <line x1="182" y1="187" x2="302" y2="171" />
-          <line x1="200" y1="193" x2="318" y2="177" />
-          <line x1="216" y1="199" x2="334" y2="183" />
+        {/* light grid */}
+        <g stroke="#2a241e" strokeWidth="0.5">
+          {Array.from({ length: 12 }).map((_, i) => (
+            <line key={`v${i}`} x1={i * 50} y1="0" x2={i * 50} y2="360" />
+          ))}
+          {Array.from({ length: 8 }).map((_, i) => (
+            <line key={`h${i}`} x1="0" y1={i * 50} x2="600" y2={i * 50} />
+          ))}
         </g>
 
-        {/* Dirt paths */}
-        <path
-          d="M0 214 C58 208 120 206 172 212 C214 216 270 224 312 232 L0 240 Z"
-          fill="url(#pathGrad)"
-          opacity="0.45"
-        />
-        <path
-          d="M248 240 C258 222 270 204 286 192 C308 176 334 164 362 156 C382 150 394 146 400 146 L400 240 Z"
-          fill="url(#pathGrad)"
-          opacity="0.35"
+        {/* parcel polygon — the lot */}
+        <polygon
+          points={`${180 + wobble(1) * 30},${110 + wobble(2) * 30} ${360 - wobble(3) * 30},${130 + wobble(4) * 30} ${380 - wobble(5) * 20},${260 - wobble(6) * 30} ${200 + wobble(7) * 30},${250 - wobble(8) * 30}`}
+          fill="rgba(155, 194, 108, 0.12)"
+          stroke="#c5e895"
+          strokeWidth="1.2"
+          strokeDasharray="4 3"
         />
 
-        {/* Small farmhouse + greenhouse */}
-        <g>
-          <rect x="286" y="130" width="28" height="16" rx="1.5" fill="#d8c9a3" opacity="0.9" />
-          <path d="M284 130 L300 120 L316 130 Z" fill="#8d5d3a" />
-          <rect x="330" y="132" width="24" height="14" fill="#8bc4a7" opacity="0.7" />
-          <path d="M330 132 L342 122 L354 132" fill="none" stroke="#d9efdf" strokeOpacity="0.7" strokeWidth="1" />
+        {/* GPS pin */}
+        <g transform="translate(290 195)">
+          <circle r="14" fill="rgba(95, 255, 170, 0.1)" stroke="#5fffaa" strokeWidth="1" />
+          <circle r="3" fill="#5fffaa" />
+          <line x1="-20" y1="0" x2="-15" y2="0" stroke="#5fffaa" strokeWidth="0.6" />
+          <line x1="20" y1="0" x2="15" y2="0" stroke="#5fffaa" strokeWidth="0.6" />
+          <line x1="0" y1="-20" x2="0" y2="-15" stroke="#5fffaa" strokeWidth="0.6" />
+          <line x1="0" y1="20" x2="0" y2="15" stroke="#5fffaa" strokeWidth="0.6" />
         </g>
 
-        {/* Decorative subtle topographic lines */}
-        <g fill="none" stroke="#7fffd4" strokeOpacity="0.16" strokeWidth="0.7">
-          <path d="M0 60 C60 44 110 68 170 58 C226 49 284 38 400 52" />
-          <path d="M0 80 C66 68 124 90 184 82 C242 76 296 60 400 72" />
+        {/* coord callouts */}
+        <g className="font-mono" fontSize="9" fill="#7a7468">
+          <text x="20" y="28">
+            ⌖ {coordinates}
+          </text>
+          <text x="20" y="44">
+            ▤ {lotCode.toUpperCase()}
+          </text>
+          <text x="490" y="28">
+            {altitude} masl
+          </text>
+          <text x="490" y="44">
+            {hectares} ha
+          </text>
+          <text x="20" y="346" fill="#5fffaa">
+            ▶ live · onchain
+          </text>
+          <text x="490" y="346">
+            satellite · 2025
+          </text>
         </g>
 
-        {/* Lot centroid marker */}
-        <circle cx="206" cy="172" r="4.5" fill="#c8a96b" opacity="0.95" />
-        <circle cx="206" cy="172" r="10" fill="none" stroke="#c8a96b" strokeOpacity="0.5" />
+        {/* scale bar */}
+        <g transform="translate(20 320)">
+          <rect x="0" y="0" width="80" height="2" fill="#9bc26c" />
+          <line x1="0" y1="-3" x2="0" y2="5" stroke="#9bc26c" strokeWidth="0.6" />
+          <line x1="40" y1="-2" x2="40" y2="4" stroke="#9bc26c" strokeWidth="0.6" />
+          <line x1="80" y1="-3" x2="80" y2="5" stroke="#9bc26c" strokeWidth="0.6" />
+          <text x="0" y="16" className="font-mono" fontSize="7" fill="#7a7468">
+            0
+          </text>
+          <text x="80" y="16" className="font-mono" fontSize="7" fill="#7a7468">
+            500m
+          </text>
+        </g>
       </svg>
-
-      <div className="absolute inset-0 flex flex-col justify-between p-3 text-xs">
-        <div className="flex items-center justify-between">
-          <span className="eyebrow">{lotCode}</span>
-          <span className="font-mono text-[10px] text-muted-harv">{coordinates}</span>
-        </div>
-        <div className="flex items-center justify-between font-mono text-[11px] text-muted-harv">
-          <span>{hectares} ha</span>
-          <span>{altitude} masl</span>
-        </div>
-      </div>
     </div>
   );
 };

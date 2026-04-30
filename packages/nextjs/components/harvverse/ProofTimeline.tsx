@@ -14,39 +14,54 @@ type ProofTimelineProps = {
   className?: string;
 };
 
-const dotByState: Record<ProofStep["state"], string> = {
-  done: "bg-[color:var(--color-harv-mint)] border-[color:var(--color-harv-mint)]/60 shadow-glow",
-  current: "bg-[color:var(--color-harv-accent)] border-[color:var(--color-harv-accent)]/60 shadow-glow-gold",
-  upcoming: "bg-transparent border-white/15",
+const dotColor: Record<ProofStep["state"], string> = {
+  done: "var(--color-leaf)",
+  current: "var(--color-honey)",
+  upcoming: "var(--color-paper-3)",
 };
 
-const labelByState: Record<ProofStep["state"], string> = {
-  done: "text-harv-text",
-  current: "text-[color:var(--color-harv-accent)]",
-  upcoming: "text-muted-harv",
+const labelClass: Record<ProofStep["state"], string> = {
+  done: "text-paper",
+  current: "text-honey",
+  upcoming: "text-paper-3",
 };
 
+/**
+ * ProofTimeline — vertical chain-of-state with square markers and a single
+ * connecting rail.
+ */
 export const ProofTimeline = ({ steps, className }: ProofTimelineProps) => {
   return (
     <ol className={`relative grid gap-5 ${className ?? ""}`}>
       <span
         aria-hidden
-        className="absolute left-[14px] top-1 bottom-1 w-px bg-gradient-to-b from-[color:var(--color-harv-mint)]/40 via-white/10 to-transparent"
+        className="absolute bottom-2 left-[7px] top-2 w-px"
+        style={{
+          background:
+            "linear-gradient(to bottom, color-mix(in oklab, var(--color-leaf) 60%, transparent), color-mix(in oklab, var(--color-rule) 100%, transparent), transparent)",
+        }}
       />
       {steps.map(step => (
-        <li key={step.id} className="relative grid grid-cols-[28px_1fr] gap-4">
+        <li key={step.id} className="relative grid grid-cols-[20px_1fr] gap-4">
           <span
-            className={`mt-1 inline-flex h-7 w-7 items-center justify-center rounded-full border ${dotByState[step.state]}`}
+            className="mt-1 inline-flex h-4 w-4 items-center justify-center border"
+            style={{
+              borderColor: dotColor[step.state],
+              backgroundColor: step.state === "upcoming" ? "transparent" : dotColor[step.state],
+              borderRadius: 1,
+            }}
           >
-            <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--color-harv-bg)]" />
+            {step.state === "current" ? (
+              <span className="live-dot" data-tone="honey" aria-hidden style={{ width: 4, height: 4 }} />
+            ) : null}
           </span>
           <div className="min-w-0">
             <div className="flex flex-wrap items-baseline gap-2">
-              <span className={`text-sm font-medium ${labelByState[step.state]}`}>{step.label}</span>
-              {step.timestamp ? <span className="eyebrow">{step.timestamp}</span> : null}
+              <span className={`text-sm ${labelClass[step.state]}`}>{step.label}</span>
+              {step.timestamp ? <span className="coordinate">{step.timestamp}</span> : null}
             </div>
-            {step.description ? <p className="mt-1 text-sm text-muted-harv">{step.description}</p> : null}
-            {step.hash ? <MonoHash value={step.hash} className="mt-2" /> : null}
+            {step.description ? <p className="mt-1 text-sm text-paper-2">{step.description}</p> : null}
+            {step.hash ? <MonoHash value={step.hash} truncate={6} className="mt-2" /> : null}
           </div>
         </li>
       ))}

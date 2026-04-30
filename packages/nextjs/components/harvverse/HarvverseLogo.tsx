@@ -1,43 +1,41 @@
 type HarvverseLogoProps = {
   className?: string;
   withWordmark?: boolean;
+  size?: "sm" | "md" | "lg";
 };
 
-export const HarvverseLogo = ({ className, withWordmark = true }: HarvverseLogoProps) => {
+/**
+ * HarvverseLogo — a stylized cherry-and-bean monogram with topographic ring.
+ */
+export const HarvverseLogo = ({ className, withWordmark = true, size = "md" }: HarvverseLogoProps) => {
+  const dim = size === "sm" ? 24 : size === "lg" ? 40 : 30;
+
   return (
-    <div className={`inline-flex items-center gap-2.5 ${className ?? ""}`}>
-      <span className="relative inline-flex h-8 w-8 items-center justify-center">
-        <svg viewBox="0 0 40 40" className="h-8 w-8" aria-hidden>
+    <div className={`inline-flex items-center gap-3 ${className ?? ""}`}>
+      <span className="relative inline-flex items-center justify-center" style={{ width: dim, height: dim }}>
+        <svg viewBox="0 0 40 40" width={dim} height={dim} aria-hidden>
           <defs>
-            <linearGradient id="harvLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#7fffd4" />
-              <stop offset="60%" stopColor="#22a06b" />
-              <stop offset="100%" stopColor="#c8a96b" />
+            <linearGradient id="logo-bean" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#c5e895" />
+              <stop offset="100%" stopColor="#5e8c3f" />
             </linearGradient>
-            <radialGradient id="harvLogoGlow" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#7fffd4" stopOpacity="0.4" />
-              <stop offset="100%" stopColor="#7fffd4" stopOpacity="0" />
-            </radialGradient>
           </defs>
-          <circle cx="20" cy="20" r="18" fill="url(#harvLogoGlow)" />
-          <g transform="translate(20 20)">
-            {/* Leaf */}
-            <path
-              d="M 0 -12 C 7 -10, 11 -4, 11 2 C 11 9, 5 13, 0 14 C -5 13, -11 9, -11 2 C -11 -4, -7 -10, 0 -12 Z"
-              fill="none"
-              stroke="url(#harvLogoGrad)"
-              strokeWidth="1.6"
-            />
-            {/* Bean crease */}
-            <path d="M -8 -2 C -4 -6, 4 -6, 8 -2" stroke="url(#harvLogoGrad)" strokeWidth="1.2" fill="none" />
-            <path d="M 0 -10 L 0 12" stroke="#7fffd4" strokeOpacity="0.4" strokeWidth="0.8" />
-          </g>
+          {/* contour ring */}
+          <circle cx="20" cy="20" r="18" fill="none" stroke="#9bc26c" strokeOpacity="0.2" strokeWidth="0.6" />
+          <circle cx="20" cy="20" r="14" fill="none" stroke="#9bc26c" strokeOpacity="0.35" strokeWidth="0.6" />
+          {/* cherry / bean cross-section */}
+          <ellipse cx="20" cy="20" rx="9" ry="12" fill="url(#logo-bean)" />
+          <line x1="20" y1="9" x2="20" y2="31" stroke="#0a0908" strokeWidth="0.8" opacity="0.5" />
+          {/* tick mark north */}
+          <line x1="20" y1="2" x2="20" y2="5" stroke="#e0b87a" strokeWidth="1.2" />
         </svg>
       </span>
       {withWordmark ? (
-        <span className="flex flex-col leading-tight">
-          <span className="text-sm font-medium tracking-[0.18em] text-harv-text uppercase">Harvverse</span>
-          <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-muted-harv">Lot Partnerships</span>
+        <span className="flex flex-col leading-none">
+          <span className="font-display text-[1.05rem] tracking-[-0.02em] text-paper">harvverse</span>
+          <span className="mt-0.5 font-mono text-[8px] uppercase tracking-[0.28em] text-paper-3">
+            agronomic terminal
+          </span>
         </span>
       ) : null}
     </div>

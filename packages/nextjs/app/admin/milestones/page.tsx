@@ -3,10 +3,9 @@
 import { useMemo, useState } from "react";
 import { MilestoneActions } from "./MilestoneActions";
 import { ChevronDownIcon, ClockIcon } from "@heroicons/react/24/outline";
-import { GlassCard } from "~~/components/harvverse/GlassCard";
-import { MetricCard } from "~~/components/harvverse/MetricCard";
+import { Panel } from "~~/components/harvverse/Panel";
 import { Section } from "~~/components/harvverse/Section";
-// TODO(phase5C/5D): replace mock helpers with api.evidence.fixtures + api.partner.partnerships
+import { Stat } from "~~/components/harvverse/Stat";
 import { buildMilestoneRows, milestoneTemplates } from "~~/lib/mock/evidence";
 import { getLotByCode } from "~~/lib/mock/lots";
 import { listPartnerships } from "~~/lib/mock/partnerships";
@@ -26,57 +25,64 @@ const AdminMilestonesPage = () => {
 
   return (
     <Section
-      eyebrow="Compressed demo milestones · M1–M6"
-      title="Record fixtures · Attest evidence"
+      index="§ MILESTONES"
+      eyebrow="Compressed demo · M1 → M6"
+      eyebrowTone="honey"
+      title="Record fixtures · Attest evidence."
       description="Each milestone produces a canonical artifactHash. Once attested, the EvidenceAttested event reconciles to Convex and advances the partnership."
     >
-      <div className="mb-6 flex flex-wrap items-center gap-3 rounded-xl border border-[color:var(--color-harv-accent)]/20 bg-[color:var(--color-harv-accent)]/5 px-4 py-3">
-        <ClockIcon className="h-4 w-4 text-[color:var(--color-harv-accent)]" />
-        <span className="font-mono text-[11px] uppercase tracking-wider text-[color:var(--color-harv-accent)]">
-          Compressed demo time
-        </span>
-        <span className="text-xs text-muted-harv">
+      <Panel padding="sm" className="mb-6 flex flex-wrap items-center gap-3 border-honey/30 bg-honey/5">
+        <ClockIcon className="h-4 w-4 text-honey" />
+        <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-honey">COMPRESSED DEMO TIME</span>
+        <span className="text-xs text-paper-2">
           Real agronomic timelines run 12+ months. The demo fast-forwards M1–M6 while keeping evidence accountable.
         </span>
-      </div>
+      </Panel>
 
       <div className="mb-8 grid gap-3 lg:grid-cols-[1.4fr_1fr_1fr]">
-        <GlassCard padding="md">
+        <Panel padding="md">
           <div className="eyebrow">Active partnership</div>
           <details className="dropdown mt-2 w-full">
-            <summary className="flex w-full cursor-pointer list-none items-center justify-between rounded-md border border-white/10 bg-white/3 px-3 py-2 text-sm text-harv-text">
+            <summary
+              className="flex w-full cursor-pointer list-none items-center justify-between border border-rule bg-ink-2 px-3 py-2 text-sm text-paper"
+              style={{ borderRadius: 2, backgroundColor: "var(--color-ink-2)" }}
+            >
               <span className="flex flex-col">
-                <span className="font-mono text-xs text-muted-harv">
+                <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-paper-3">
                   {partnership ? `#${partnership.onchainPartnershipId}` : "—"}
                 </span>
                 <span>{lot?.farmName ?? partnership?.lotCode}</span>
               </span>
               <ChevronDownIcon className="h-4 w-4" />
             </summary>
-            <ul className="dropdown-content menu glass z-50 mt-2 w-full rounded-xl border-white/10 p-1 shadow-xl">
+            <ul
+              className="dropdown-content menu z-50 mt-2 w-full border border-rule bg-ink-1 p-1 shadow-xl"
+              style={{ borderRadius: 2, backgroundColor: "var(--color-ink-1)" }}
+            >
               {partnerships.map(p => (
                 <li key={p.id}>
                   <button
                     type="button"
                     onClick={() => setPartnershipId(p.id)}
-                    className={`flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-xs ${
-                      p.id === partnershipId ? "bg-white/5 text-[color:var(--color-harv-mint)]" : "text-harv-text"
+                    className={`flex w-full items-center justify-between px-3 py-2 text-left text-xs ${
+                      p.id === partnershipId ? "bg-leaf/10 text-leaf" : "text-paper hover:bg-ink-2"
                     }`}
+                    style={{ borderRadius: 1 }}
                   >
                     <span>{getLotByCode(p.lotCode)?.farmName ?? p.lotCode}</span>
-                    <span className="font-mono text-muted-harv">#{p.onchainPartnershipId}</span>
+                    <span className="font-mono text-paper-3">#{p.onchainPartnershipId}</span>
                   </button>
                 </li>
               ))}
             </ul>
           </details>
-        </GlassCard>
-        <MetricCard label="Recorded fixtures" value={`${recorded} / 6`} mono />
-        <MetricCard
+        </Panel>
+        <Stat label="Recorded fixtures" value={`${recorded} / 6`} size="md" tone="leaf" />
+        <Stat
           label="Attested onchain"
           value={`${attested} / 6`}
-          tone="mint"
-          mono
+          tone="proof"
+          size="md"
           hint="EvidenceRegistry · ATTESTER_ROLE"
         />
       </div>
@@ -92,9 +98,8 @@ const AdminMilestonesPage = () => {
         ))}
       </div>
 
-      <p className="mt-8 text-[11px] text-muted-harv">
-        Templates: {milestoneTemplates.length} milestones · evidence as accountable claims, never proof of physical
-        truth.
+      <p className="mt-8 font-mono text-[10px] uppercase tracking-[0.18em] text-paper-3">
+        TEMPLATES: {milestoneTemplates.length} · EVIDENCE AS ACCOUNTABLE CLAIMS, NEVER PROOF OF PHYSICAL TRUTH
       </p>
     </Section>
   );

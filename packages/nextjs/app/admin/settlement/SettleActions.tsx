@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowPathIcon, BoltIcon, CheckCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/outline";
-import { GlassCard } from "~~/components/harvverse/GlassCard";
+import { SettlementChoreography } from "./SettlementChoreography";
+import { ArrowPathIcon, BoltIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
 import { MonoHash } from "~~/components/harvverse/MonoHash";
+import { Panel } from "~~/components/harvverse/Panel";
 import { StatusPill } from "~~/components/harvverse/StatusPill";
 import type { Settlement } from "~~/lib/mock/types";
 
@@ -26,62 +27,67 @@ type SettleActionsProps = {
 export const SettleActions = ({ settlement, isUnderfunded }: SettleActionsProps) => {
   const [status, setStatus] = useState(settlement.status);
   const [settlementTxHash, setSettlementTxHash] = useState<string | undefined>(settlement.settlementTxHash);
-  const [signing, setSigning] = useState(false);
+  const [showAnimation, setShowAnimation] = useState(false);
 
   const onSettle = () => {
-    setSigning(true);
-    setTimeout(() => {
-      setSigning(false);
-      setStatus("confirmed");
-      setSettlementTxHash(fakeHash(Date.now()));
-    }, 1300);
+    setShowAnimation(true);
   };
 
-  const disabled = signing || isUnderfunded || status === "confirmed";
+  const onAnimationComplete = () => {
+    setStatus("confirmed");
+    setSettlementTxHash(fakeHash(Date.now()));
+  };
+
+  const disabled = isUnderfunded || status === "confirmed";
 
   return (
-    <GlassCard padding="lg" glow={status === "confirmed" ? "mint" : "none"}>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <div className="eyebrow">Execute deterministic settlement</div>
-          <h3 className="mt-1 text-xl font-light tracking-tight text-harv-text">SettlementDistributor · settle()</h3>
+    <>
+      <Panel padding="lg" variant={status === "confirmed" ? "hot" : "default"}>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <span className="eyebrow-leaf">EXECUTE · DETERMINISTIC</span>
+            <h3 className="font-display mt-2 text-xl leading-none tracking-tight text-paper">
+              SettlementDistributor.settle()
+            </h3>
+          </div>
+          <StatusPill status={status} />
         </div>
-        <StatusPill status={status} />
-      </div>
 
-      {isUnderfunded ? (
-        <div className="mt-4 flex items-start gap-2 rounded-xl border border-[color:var(--color-harv-accent)]/30 bg-[color:var(--color-harv-accent)]/5 p-3 text-xs text-[color:var(--color-harv-accent)]">
-          <ExclamationTriangleIcon className="mt-0.5 h-4 w-4 shrink-0" />
-          Pool underfunded · settle() will revert. Coordinate with custody to fund the pool first.
-        </div>
+        <button
+          type="button"
+          onClick={onSettle}
+          disabled={disabled}
+          className="btn btn-primary mt-5 inline-flex w-full items-center justify-center gap-2 shimmer-cta disabled:opacity-40"
+        >
+          {showAnimation ? <ArrowPathIcon className="h-4 w-4 animate-spin" /> : <BoltIcon className="h-4 w-4" />}
+          {status === "confirmed" ? "Settlement confirmed" : "Execute settlement"}
+        </button>
+
+        {settlementTxHash ? (
+          <div className="mt-5">
+            <MonoHash label="SETTLEMENT TX" value={settlementTxHash} truncate={6} />
+          </div>
+        ) : null}
+
+        {status === "confirmed" ? (
+          <div className="mt-3 inline-flex items-center gap-1.5 text-[11px] text-leaf">
+            <CheckCircleIcon className="h-3.5 w-3.5" />
+            SettlementExecuted reconciled (mock) · partnership marked settled
+          </div>
+        ) : null}
+
+        <p className="mt-4 text-[11px] text-paper-3">
+          Operator wallet must hold SETTLEMENT_OPERATOR_ROLE. Convex prepares but never signs.
+        </p>
+      </Panel>
+
+      {showAnimation ? (
+        <SettlementChoreography
+          settlement={settlement}
+          onClose={() => setShowAnimation(false)}
+          onComplete={onAnimationComplete}
+        />
       ) : null}
-
-      <button
-        type="button"
-        onClick={onSettle}
-        disabled={disabled}
-        className="btn btn-primary mt-5 inline-flex w-full items-center justify-center gap-2 disabled:opacity-40"
-      >
-        {signing ? <ArrowPathIcon className="h-4 w-4 animate-spin" /> : <BoltIcon className="h-4 w-4" />}
-        {status === "confirmed" ? "Settlement confirmed" : signing ? "Settling…" : "Execute settlement"}
-      </button>
-
-      {settlementTxHash ? (
-        <div className="mt-4">
-          <MonoHash label="SETTLEMENT TX" value={settlementTxHash} />
-        </div>
-      ) : null}
-
-      {status === "confirmed" ? (
-        <div className="mt-3 inline-flex items-center gap-1.5 text-[11px] text-[color:var(--color-harv-mint)]">
-          <CheckCircleIcon className="h-3.5 w-3.5" />
-          SettlementExecuted reconciled (mock) · partnership marked settled
-        </div>
-      ) : null}
-
-      <p className="mt-3 text-[11px] text-muted-harv">
-        Operator wallet must hold SETTLEMENT_OPERATOR_ROLE. Convex prepares but never signs.
-      </p>
-    </GlassCard>
+    </>
   );
 };

@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { hardhat } from "viem/chains";
 import { Bars3Icon, BugAntIcon } from "@heroicons/react/24/outline";
 import { HarvverseLogo } from "~~/components/harvverse/HarvverseLogo";
+import { LiveDot } from "~~/components/harvverse/LiveDot";
 import { useOutsideClick, useTargetNetwork } from "~~/hooks/scaffold-eth";
 
 const RoleSwitcher = dynamic(() => import("~~/components/harvverse/RoleSwitcher").then(module => module.RoleSwitcher), {
@@ -22,7 +23,7 @@ const RainbowKitCustomConnectButton = dynamic(
   {
     ssr: false,
     loading: () => (
-      <button className="btn btn-ghost btn-sm border border-white/10 text-muted-harv" type="button">
+      <button className="btn btn-ghost btn-sm" type="button">
         Wallet
       </button>
     ),
@@ -52,16 +53,13 @@ const HeaderMenuLinks = ({ inDrawer = false }: { inDrawer?: boolean }) => {
           <li key={href}>
             <Link
               href={href}
-              className={`relative inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm transition ${
+              className={`relative inline-flex items-center gap-2 px-2 py-1 text-[12px] font-mono uppercase tracking-[0.18em] transition ${
                 inDrawer ? "w-full" : ""
-              } ${
-                isActive ? "bg-white/5 text-[color:var(--color-harv-mint)]" : "text-harv-text/80 hover:text-harv-text"
-              }`}
+              } ${isActive ? "text-leaf" : "text-paper-2 hover:text-paper"}`}
+              style={{ borderRadius: 1 }}
             >
               {label}
-              {isActive ? (
-                <span className="absolute -bottom-0.5 left-3 right-3 h-px bg-[color:var(--color-harv-mint)]" />
-              ) : null}
+              {isActive ? <span className="absolute -bottom-1 left-2 right-2 h-px bg-leaf" /> : null}
             </Link>
           </li>
         );
@@ -80,7 +78,20 @@ export const Header = () => {
   });
 
   return (
-    <div className="sticky top-0 z-30 w-full border-b border-white/5 bg-[color:var(--color-harv-bg)]/70 backdrop-blur-xl">
+    <div className="sticky top-0 z-30 w-full border-b border-rule bg-[color:var(--color-ink-0)]/85 backdrop-blur-xl">
+      {/* Top tactical strip */}
+      <div className="hidden h-6 items-center justify-between border-b border-rule px-4 sm:flex sm:px-6 lg:px-10">
+        <div className="flex items-center gap-4 font-mono text-[10px] uppercase tracking-[0.2em] text-paper-3">
+          <span>HARVVERSE · DEMO REL.04.29.26</span>
+          <span className="hidden md:inline">··</span>
+          <span className="hidden md:inline">⌖ 14°56′47.4″N · 88°05′10.7″W</span>
+        </div>
+        <div className="flex items-center gap-4 font-mono text-[10px] uppercase tracking-[0.2em] text-paper-3">
+          <span>NOT FINANCIAL ADVICE</span>
+          <span>· LOCAL ONLY</span>
+        </div>
+      </div>
+
       <div className="mx-auto flex h-14 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-10">
         <div className="flex items-center gap-6">
           <details className="dropdown lg:hidden" ref={burgerMenuRef}>
@@ -88,16 +99,14 @@ export const Header = () => {
               <Bars3Icon className="h-5 w-5" />
             </summary>
             <ul
-              className="menu dropdown-content glass z-50 mt-2 w-56 rounded-xl border-white/10 p-2 text-sm shadow-xl"
+              className="menu dropdown-content z-50 mt-2 w-56 border border-rule bg-ink-1 p-2 text-sm shadow-xl"
+              style={{ borderRadius: 2, backgroundColor: "var(--color-ink-1)" }}
               onClick={() => burgerMenuRef?.current?.removeAttribute("open")}
             >
               <HeaderMenuLinks inDrawer />
               <div className="divider-harv my-2" />
               <li>
-                <Link
-                  href="/debug"
-                  className="inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-xs text-muted-harv"
-                >
+                <Link href="/debug" className="inline-flex items-center gap-2 px-2 py-1.5 text-xs text-paper-3">
                   <BugAntIcon className="h-4 w-4" />
                   Debug Contracts
                 </Link>
@@ -116,14 +125,11 @@ export const Header = () => {
 
         <div className="flex items-center gap-3">
           <div className="hidden items-center gap-2 sm:flex">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/8 bg-white/3 px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-muted-harv">
-              <span
-                className={`h-1.5 w-1.5 rounded-full ${
-                  isLocalNetwork
-                    ? "bg-[color:var(--color-harv-mint)] animate-pulse-glow"
-                    : "bg-[color:var(--color-harv-accent)]"
-                }`}
-              />
+            <span
+              className="inline-flex items-center gap-1.5 border border-rule bg-ink-2 px-2 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-paper-3"
+              style={{ borderRadius: 2, backgroundColor: "var(--color-ink-2)" }}
+            >
+              <LiveDot tone={isLocalNetwork ? "leaf" : "honey"} />
               {targetNetwork.name}
             </span>
           </div>

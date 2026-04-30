@@ -1,16 +1,23 @@
 import Link from "next/link";
-import { ArrowRightIcon, BeakerIcon, CheckBadgeIcon, CubeTransparentIcon, EyeIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowRightIcon,
+  ArrowTrendingUpIcon,
+  CheckBadgeIcon,
+  CommandLineIcon,
+  CubeTransparentIcon,
+  EyeIcon,
+} from "@heroicons/react/24/outline";
 import { CoffeeBeanArt } from "~~/components/harvverse/CoffeeBeanArt";
-import { GlassCard } from "~~/components/harvverse/GlassCard";
 import { GridBackdrop } from "~~/components/harvverse/GridBackdrop";
 import { HeroParticleField } from "~~/components/harvverse/HeroParticleField";
+import { LiveDot } from "~~/components/harvverse/LiveDot";
 import { LotCard } from "~~/components/harvverse/LotCard";
-import { MetricCard } from "~~/components/harvverse/MetricCard";
+import { Panel } from "~~/components/harvverse/Panel";
 import { ProofTimeline } from "~~/components/harvverse/ProofTimeline";
 import { Section } from "~~/components/harvverse/Section";
 import { SettlementProofPanel } from "~~/components/harvverse/SettlementProofPanel";
+import { Stat } from "~~/components/harvverse/Stat";
 import { TopographicLines } from "~~/components/harvverse/TopographicLines";
-// TODO(phase3D): replace mock imports with useQuery(api.partner.lots.*) when integrating
 import { getActiveLot, listLots } from "~~/lib/mock/lots";
 import { getPlanByCode, getPlanForLot } from "~~/lib/mock/plans";
 import { mockSettlements } from "~~/lib/mock/settlements";
@@ -20,21 +27,25 @@ const HOW_IT_WORKS = [
     icon: EyeIcon,
     title: "Discover",
     desc: "Inspect lot data, agronomic context, and locked plan terms before any wallet prompt.",
+    code: "01·DISCO",
   },
   {
     icon: CheckBadgeIcon,
     title: "Sign",
     desc: "Approve demo MockUSDC, then open the partnership from your wallet with explicit intent.",
+    code: "02·SIGN",
   },
   {
-    icon: BeakerIcon,
+    icon: CommandLineIcon,
     title: "Evidence",
     desc: "Six milestone fixtures are attested onchain by authorized verifier roles.",
+    code: "03·EVID",
   },
   {
     icon: CubeTransparentIcon,
     title: "Settle",
     desc: "Deterministic settlement computes revenue and split from locked plan terms and evidence.",
+    code: "04·SETL",
   },
 ];
 
@@ -46,130 +57,192 @@ const Home = () => {
 
   return (
     <>
-      {/* === Hero ============================================================ */}
+      {/* === HERO ============================================================ */}
       <section className="relative isolate overflow-hidden">
-        <GridBackdrop variant="dense" className="opacity-70" />
+        <GridBackdrop variant="dense" className="opacity-60" />
         <TopographicLines intensity="normal" />
         <HeroParticleField />
+
+        {/* warm color washes */}
         <div
           aria-hidden
-          className="pointer-events-none absolute -left-40 top-20 h-[420px] w-[420px] rounded-full bg-[color:var(--color-harv-primary)]/30 blur-3xl"
+          className="pointer-events-none absolute -left-32 top-12 h-[440px] w-[440px] rounded-full bg-leaf/15 blur-[110px]"
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute right-[-160px] top-[-80px] h-[520px] w-[520px] rounded-full bg-[color:var(--color-harv-mint)]/8 blur-3xl"
+          className="pointer-events-none absolute right-[-160px] top-[-120px] h-[520px] w-[520px] rounded-full bg-honey/10 blur-[120px]"
         />
 
-        <div className="relative mx-auto grid w-full max-w-7xl grid-cols-1 gap-10 px-4 pb-20 pt-16 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16 lg:px-10 lg:pb-28 lg:pt-24">
+        <div className="relative mx-auto grid w-full max-w-7xl grid-cols-1 gap-12 px-4 pb-20 pt-14 sm:px-6 lg:grid-cols-[1.2fr_1fr] lg:gap-20 lg:px-10 lg:pb-28 lg:pt-20">
           <div className="flex flex-col items-start">
-            <h1 className="mt-6 max-w-2xl text-4xl font-light leading-[1.05] tracking-tight text-harv-text sm:text-5xl lg:text-6xl">
-              Own a slice of <span className="text-gradient-harv">single-origin coffee</span>,{" "}
-              <span className="whitespace-nowrap">on-chain proofs</span> included.
+            {/* Mission strip */}
+            <div
+              className="reveal reveal-1 flex flex-wrap items-center gap-3 border border-rule bg-ink-2/60 px-3 py-1.5"
+              style={{ borderRadius: 2 }}
+            >
+              <LiveDot tone="leaf" />
+              <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-paper-2">
+                ZAFIRO · Parainema · 1.0 mz · Comayagua HN
+              </span>
+              <span className="hidden md:inline coordinate">⌖ 14°56′47.4″N · 88°05′10.7″W</span>
+            </div>
+
+            <h1
+              className="reveal reveal-2 mt-6 font-display text-[clamp(2.5rem,5.5vw,5.5rem)] leading-[0.95] tracking-[-0.035em] text-paper"
+              style={{ fontVariationSettings: '"opsz" 144, "SOFT" 80' }}
+            >
+              Co-invest in <em className="not-italic text-gradient-leaf">single-origin</em> coffee,
+              <br />
+              <span className="text-paper-2">verified by the chain.</span>
             </h1>
 
-            <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-harv sm:text-lg">
-              Harvverse maps specialty coffee lots to accountable, proof-first partnerships. Review agronomy, sign with
-              your wallet, track milestone evidence, and settle from locked terms.
+            <p className="reveal reveal-3 mt-6 max-w-xl text-base leading-relaxed text-paper-2 sm:text-lg">
+              Harvverse maps specialty coffee lots to accountable, proof-first partnerships. Review the agronomy, sign
+              with your wallet, watch milestone evidence land onchain, and settle from locked terms.{" "}
+              <span className="text-paper">60/40 split, no overrides, deterministic math.</span>
             </p>
 
-            <div className="mt-8 flex flex-wrap items-center gap-3">
+            <div className="reveal reveal-4 mt-8 flex flex-wrap items-center gap-3">
               <Link
                 href={`/partner/lots/${activeLot.code}`}
-                className="btn btn-primary btn-md inline-flex items-center gap-2"
+                className="btn btn-primary btn-md shimmer-cta inline-flex items-center gap-2"
               >
-                View Lots
+                Enter the active lot
                 <ArrowRightIcon className="h-4 w-4" />
               </Link>
-              <Link
-                href="/partner/dashboard"
-                className="btn btn-ghost btn-md border border-white/10 text-harv-text hover:border-[color:var(--color-harv-mint)]/30"
-              >
-                See your lots
+              <Link href="/partner/dashboard" className="btn btn-ghost btn-md">
+                See your partnerships
               </Link>
             </div>
 
-            <div className="mt-12 grid w-full max-w-5xl grid-cols-2 gap-3 sm:grid-cols-4">
-              <MetricCard
-                label="Active lots"
-                value={lots.length}
-                mono
-                align="center"
-                className="min-h-[160px]"
-                valueClassName="text-4xl"
-              />
-              <MetricCard
+            <div className="reveal reveal-5 mt-12 grid w-full max-w-3xl grid-cols-2 gap-3 sm:grid-cols-4">
+              <Stat label="Active lots" value={lots.length} tone="default" size="md" coordinate="01" />
+              <Stat
                 label="Origin"
-                value={
-                  <span className="inline-flex flex-col items-center px-2 text-[0.78em] leading-tight">
-                    <span>Central</span>
-                    <span>America</span>
-                  </span>
-                }
+                value={<span className="font-display text-2xl">Honduras</span>}
                 tone="muted"
-                align="center"
-                className="min-h-[160px]"
-                valueClassName="text-[clamp(1rem,1.5vw,1.6rem)] leading-tight"
+                size="sm"
+                coordinate="02"
               />
-              <MetricCard
-                label="Avg ticket"
-                value="$3.4k"
-                tone="mint"
-                align="center"
-                className="min-h-[160px]"
-                valueClassName="text-4xl"
-              />
-              <MetricCard
+              <Stat label="Avg ticket" value="$3.4k" tone="honey" size="md" coordinate="03" />
+              <Stat
                 label="Chain"
-                value={
-                  <span className="inline-flex flex-col items-center px-2 text-[0.78em] leading-tight">
-                    <span>Hard</span>
-                    <span>hat</span>
-                  </span>
-                }
-                tone="gold"
-                align="center"
-                className="min-h-[160px]"
-                valueClassName="text-[clamp(1.2rem,1.6vw,1.8rem)]"
+                value={<span className="font-mono text-2xl">31337</span>}
+                tone="proof"
+                size="sm"
+                coordinate="04"
               />
+            </div>
+
+            {/* Proof line */}
+            <div className="reveal reveal-6 mt-10 flex flex-wrap items-center gap-4 border-t border-rule pt-6 text-[12px] text-paper-3">
+              <span className="font-mono uppercase tracking-[0.18em]">VALIDATED BY</span>
+              <span className="text-paper">Jorge A. Lanza</span>
+              <span>·</span>
+              <span>Cup of Excellence Honduras 2013 · 92.75</span>
+              <span>·</span>
+              <span>23 peer-reviewed publications</span>
             </div>
           </div>
 
-          <div className="relative flex items-center justify-center">
-            <CoffeeBeanArt className="relative aspect-square w-full max-w-[520px]" />
+          {/* Hero art */}
+          <div className="reveal reveal-3 relative flex items-center justify-center">
+            <div className="relative aspect-square w-full max-w-[560px]">
+              <CoffeeBeanArt className="absolute inset-0" />
+              {/* corner crosshair markers */}
+              <div className="absolute inset-0 pointer-events-none crosshair-4">
+                <span data-corner="tl" />
+                <span data-corner="tr" />
+                <span data-corner="bl" />
+                <span data-corner="br" />
+              </div>
+              {/* live oracle readout panel */}
+              <div className="absolute -bottom-4 left-2 right-2 sm:left-6 sm:right-6">
+                <Panel padding="xs" className="scanline">
+                  <div className="grid grid-cols-3 divide-x divide-rule">
+                    <div className="px-3">
+                      <div className="flex items-center gap-1.5">
+                        <LiveDot tone="proof" />
+                        <span className="eyebrow">Coffee spot</span>
+                      </div>
+                      <div className="mt-1 font-mono text-sm text-paper">$3.48 / lb</div>
+                    </div>
+                    <div className="px-3">
+                      <div className="flex items-center gap-1.5">
+                        <LiveDot tone="honey" />
+                        <span className="eyebrow">Native / USD</span>
+                      </div>
+                      <div className="mt-1 font-mono text-sm text-paper">$0.6125</div>
+                    </div>
+                    <div className="px-3">
+                      <div className="flex items-center gap-1.5">
+                        <LiveDot tone="leaf" />
+                        <span className="eyebrow">Block</span>
+                      </div>
+                      <div className="mt-1 font-mono text-sm text-paper">#11,482,331</div>
+                    </div>
+                  </div>
+                </Panel>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="divider-harv" />
+        <div className="divider-leaf" />
       </section>
 
-      {/* === How it works ==================================================== */}
+      {/* === HOW IT WORKS ==================================================== */}
       <Section
-        eyebrow="Protocol flow · 4 steps"
-        title="From discovery to deterministic settlement"
+        index="§ 01"
+        eyebrow="Protocol flow"
+        eyebrowTone="leaf"
+        coordinate="four-step rail"
+        title="From discovery to deterministic settlement."
         description="Each step writes verifiable state. Frontend guides decisions; onchain records prove execution."
       >
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {HOW_IT_WORKS.map((step, idx) => (
-            <GlassCard key={step.title} padding="lg" className="relative">
+            <Panel
+              key={step.title}
+              padding="lg"
+              className="group relative transition hover:-translate-y-1 hover:border-leaf/40"
+            >
               <div className="flex items-start justify-between">
-                <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[color:var(--color-harv-mint)]/25 bg-[color:var(--color-harv-mint)]/8 text-[color:var(--color-harv-mint)]">
+                <span
+                  className="inline-flex h-10 w-10 items-center justify-center border border-leaf/30 bg-leaf/10 text-leaf"
+                  style={{ borderRadius: 1 }}
+                >
                   <step.icon className="h-5 w-5" />
                 </span>
-                <span className="font-mono text-xs text-muted-harv">0{idx + 1}</span>
+                <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-paper-3">{step.code}</span>
               </div>
-              <h3 className="mt-5 text-lg font-medium text-harv-text">{step.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-harv">{step.desc}</p>
-            </GlassCard>
+              <h3
+                className="font-display mt-6 text-[1.6rem] leading-none tracking-[-0.025em] text-paper"
+                style={{ fontVariationSettings: '"opsz" 96, "SOFT" 30' }}
+              >
+                {step.title}
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-paper-2">{step.desc}</p>
+              <div className="absolute bottom-3 right-3 font-mono text-[10px] text-paper-3 opacity-0 transition group-hover:opacity-100">
+                phase {idx + 1}/4
+              </div>
+            </Panel>
           ))}
         </div>
       </Section>
 
-      {/* === Active lot teaser =============================================== */}
+      {/* === ACTIVE LOT ====================================================== */}
       <Section
+        index="§ 02"
         eyebrow="Featured lot"
+        eyebrowTone="honey"
+        coordinate={`lot ${activeLot.code}`}
         title={
           <>
-            {activeLot.farmName} · <span className="text-muted-harv">{activeLot.region}</span>
+            {activeLot.farmName}
+            <span className="block text-paper-2">
+              {activeLot.region}, {activeLot.country}
+            </span>
           </>
         }
         description={activeLot.summary}
@@ -186,17 +259,31 @@ const Home = () => {
         <LotCard lot={activeLot} plan={activePlan} layout="feature" />
       </Section>
 
-      {/* === Proof preview =================================================== */}
+      {/* === PROOF =========================================================== */}
       <Section
+        index="§ 03"
         eyebrow="What proof looks like"
-        title="Every step writes verifiable state"
+        eyebrowTone="proof"
+        title={
+          <>
+            Every step writes <em className="not-italic text-gradient-honey">verifiable</em> state.
+          </>
+        }
         description="From signature to payout, Harvverse keeps the audit trail visible and deterministic."
       >
-        <div className="grid gap-6 lg:grid-cols-[1fr_1.4fr]">
-          <GlassCard padding="lg">
-            <div className="eyebrow">Partnership timeline</div>
-            <h3 className="mt-2 text-2xl font-light tracking-tight text-harv-text">Signed → settled</h3>
-            <p className="mt-2 text-sm text-muted-harv">
+        <div className="grid gap-5 lg:grid-cols-[1fr_1.45fr]">
+          <Panel padding="lg" crosshair>
+            <div className="flex items-center justify-between">
+              <div className="eyebrow-leaf">PARTNERSHIP TIMELINE</div>
+              <ArrowTrendingUpIcon className="h-4 w-4 text-leaf" />
+            </div>
+            <h3
+              className="font-display mt-3 text-3xl leading-none tracking-[-0.025em] text-paper"
+              style={{ fontVariationSettings: '"opsz" 96, "SOFT" 30' }}
+            >
+              Signed → settled
+            </h3>
+            <p className="mt-2 text-sm text-paper-2">
               A simplified view of state transitions for the featured partnership.
             </p>
             <div className="mt-6">
@@ -238,7 +325,7 @@ const Home = () => {
                 ]}
               />
             </div>
-          </GlassCard>
+          </Panel>
 
           <SettlementProofPanel settlement={featuredSettlement} />
         </div>
@@ -246,15 +333,14 @@ const Home = () => {
 
       {/* === Other lots ====================================================== */}
       <Section
+        index="§ 04"
         eyebrow="Browse"
-        title="More lots in the pipeline"
-        description="Each lot has a single locked plan. New lots appear as farmers and verifiers register them."
+        coordinate="catalog feed"
+        title="More lots in the pipeline."
+        description="Each lot carries a single locked plan. New lots appear as farmers and verifiers register them."
         actions={
-          <Link
-            href="/partner/lots"
-            className="btn btn-ghost btn-sm border border-white/10 text-harv-text hover:border-[color:var(--color-harv-mint)]/30"
-          >
-            All lots
+          <Link href="/partner/lots" className="btn btn-ghost btn-sm">
+            All lots →
           </Link>
         }
       >

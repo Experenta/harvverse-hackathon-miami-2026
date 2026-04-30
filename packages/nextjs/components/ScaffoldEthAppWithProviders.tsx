@@ -68,9 +68,10 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
       <Toaster
         toastOptions={{
           style: {
-            background: "#0a1815",
-            color: "#f5f7f6",
-            border: "1px solid rgba(127, 255, 212, 0.18)",
+            background: "#110f0d",
+            color: "#f4ede4",
+            border: "1px solid rgba(155, 194, 108, 0.25)",
+            borderRadius: 2,
             fontFamily: "var(--font-geist-sans)",
           },
         }}
@@ -88,8 +89,8 @@ export const queryClient = new QueryClient({
 });
 
 const harvverseRainbowTheme = darkTheme({
-  accentColor: "#22a06b",
-  accentColorForeground: "#061310",
+  accentColor: "#9bc26c",
+  accentColorForeground: "#0a0908",
   borderRadius: "small",
   fontStack: "system",
   overlayBlur: "small",
@@ -100,7 +101,7 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider avatar={BlockieAvatar} theme={harvverseRainbowTheme}>
-          <ProgressBar height="2px" color="#7fffd4" />
+          <ProgressBar height="2px" color="#9bc26c" />
           <ScaffoldEthApp>{children}</ScaffoldEthApp>
         </RainbowKitProvider>
       </QueryClientProvider>

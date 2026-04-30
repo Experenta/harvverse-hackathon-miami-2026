@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { GlassCard } from "~~/components/harvverse/GlassCard";
+import { Panel } from "~~/components/harvverse/Panel";
 import { useViewerRole } from "~~/components/harvverse/RoleSwitcher";
 import { Section } from "~~/components/harvverse/Section";
 
@@ -15,18 +15,20 @@ export const PartnerDashboardRoleGate = ({ children }: PartnerDashboardRoleGateP
   if (role === "guest") {
     return (
       <Section
+        index="§ DASHBOARD"
         eyebrow="Partner dashboard"
-        title="Connect your wallet to see your partnerships"
-        description="Once you sign a partnership, your certificate proof and milestone evidence will live here."
+        eyebrowTone="leaf"
+        title="Connect your wallet to see your partnerships."
+        description="Once you sign, your certificate proof and milestone evidence live here."
       >
-        <GlassCard padding="lg" className="text-center">
-          <p className="text-sm text-muted-harv">
-            Use the Connect Wallet button in the header. This is a testnet demo with deterministic settlement only.
+        <Panel padding="xl" className="text-center" crosshair>
+          <p className="text-sm text-paper-2">
+            Use the Connect Wallet button in the header. This is a local demo with deterministic settlement only.
           </p>
           <Link href="/" className="btn btn-primary mt-5 inline-flex items-center gap-2">
             Browse lots
           </Link>
-        </GlassCard>
+        </Panel>
       </Section>
     );
   }

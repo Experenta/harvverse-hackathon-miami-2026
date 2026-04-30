@@ -8,7 +8,10 @@ type ParticleFieldProps = {
   color?: string;
 };
 
-export const ParticleField = ({ className, density = 38, color = "#7fffd4" }: ParticleFieldProps) => {
+/**
+ * ParticleField — drifting dots on a canvas.  Soft, never the focal point.
+ */
+export const ParticleField = ({ className, density = 32, color = "#9bc26c" }: ParticleFieldProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -38,7 +41,7 @@ export const ParticleField = ({ className, density = 38, color = "#7fffd4" }: Pa
       r: 0.4 + Math.random() * 1.6,
       vx: (Math.random() - 0.5) * 0.04,
       vy: -0.02 - Math.random() * 0.04,
-      a: 0.2 + Math.random() * 0.5,
+      a: 0.18 + Math.random() * 0.45,
     }));
 
     let raf = 0;

@@ -37,25 +37,30 @@ export const RoleSwitcher = ({ className }: { className?: string }) => {
   return (
     <div className={`relative ${className ?? ""}`}>
       <details className="dropdown dropdown-end">
-        <summary className="flex cursor-pointer list-none items-center gap-2 rounded-full border border-[color:var(--color-harv-accent)]/30 bg-[color:var(--color-harv-accent)]/8 px-3 py-1.5 text-xs text-[color:var(--color-harv-accent)] transition hover:bg-[color:var(--color-harv-accent)]/15">
-          <span className="font-mono uppercase tracking-wider text-[10px] text-[color:var(--color-harv-accent)]/70">
-            DEV · Role
-          </span>
+        <summary
+          className="flex cursor-pointer list-none items-center gap-2 border border-honey/30 bg-honey/8 px-3 py-1.5 text-xs text-honey transition hover:bg-honey/15"
+          style={{ borderRadius: 2 }}
+        >
+          <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-honey/70">DEV · ROLE</span>
           <span className="font-medium">{current.label}</span>
           <ChevronDownIcon className="h-3.5 w-3.5" />
         </summary>
-        <ul className="dropdown-content menu glass z-50 mt-2 w-44 rounded-xl border-white/10 p-1 text-sm shadow-xl">
+        <ul
+          className="dropdown-content menu z-50 mt-2 w-44 border border-rule bg-ink-1 p-1 text-sm shadow-xl"
+          style={{ borderRadius: 2, backgroundColor: "var(--color-ink-1)" }}
+        >
           {roles.map(r => (
             <li key={r.id}>
               <button
                 type="button"
                 onClick={() => setRole(r.id)}
-                className={`flex w-full justify-between rounded-md px-2 py-1.5 text-left ${
-                  r.id === role ? "bg-white/5 text-[color:var(--color-harv-mint)]" : "text-harv-text"
+                className={`flex w-full justify-between px-2 py-1.5 text-left ${
+                  r.id === role ? "bg-leaf/10 text-leaf" : "text-paper hover:bg-ink-2"
                 }`}
+                style={{ borderRadius: 1 }}
               >
                 {r.label}
-                {r.id === role ? <span className="text-[color:var(--color-harv-mint)]">●</span> : null}
+                {r.id === role ? <span className="text-leaf">●</span> : null}
               </button>
             </li>
           ))}

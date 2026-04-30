@@ -8,6 +8,10 @@ const ParticleField = dynamic(() => import("./ParticleField").then(module => mod
   loading: () => null,
 });
 
+/**
+ * HeroParticleField — ambient drift of leaf-green dots, only on capable
+ * viewports and when the user hasn't requested reduced motion.
+ */
 export const HeroParticleField = () => {
   const [enabled, setEnabled] = useState(false);
 
@@ -37,5 +41,5 @@ export const HeroParticleField = () => {
   }, []);
 
   if (!enabled) return null;
-  return <ParticleField className="opacity-55" density={20} />;
+  return <ParticleField className="opacity-50" density={20} color="#9bc26c" />;
 };

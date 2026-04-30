@@ -1,5 +1,5 @@
-import { GlassCard } from "./GlassCard";
 import { MonoHash } from "./MonoHash";
+import { Panel } from "./Panel";
 import { StatusPill } from "./StatusPill";
 
 type MilestoneStepProps = {
@@ -13,6 +13,10 @@ type MilestoneStepProps = {
   className?: string;
 };
 
+/**
+ * MilestoneStep — single row of the milestone timeline.
+ * Sharp panel, monospace milestone marker, optional artifact/tx hashes.
+ */
 export const MilestoneStep = ({
   number,
   label,
@@ -23,29 +27,39 @@ export const MilestoneStep = ({
   completedAt,
   className,
 }: MilestoneStepProps) => {
+  const isAttested = status === "attested";
   return (
-    <GlassCard padding="md" className={className}>
+    <Panel padding="md" className={className}>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full border border-[color:var(--color-harv-mint)]/30 bg-[color:var(--color-harv-mint)]/8 font-mono text-sm text-[color:var(--color-harv-mint)]">
-            M{number}
+          <div
+            className={`flex h-9 w-9 items-center justify-center border ${
+              isAttested
+                ? "border-leaf bg-leaf/15 text-leaf"
+                : status === "recorded"
+                  ? "border-honey bg-honey/10 text-honey"
+                  : "border-rule text-paper-3"
+            }`}
+            style={{ borderRadius: 1 }}
+          >
+            <span className="font-mono text-xs">M{number}</span>
           </div>
           <div>
-            <div className="text-base font-medium text-harv-text">{label}</div>
+            <div className="text-base text-paper">{label}</div>
             {completedAt ? <div className="eyebrow mt-1">{completedAt}</div> : null}
           </div>
         </div>
         <StatusPill status={status} />
       </div>
 
-      {notes ? <p className="mt-3 text-sm text-muted-harv">{notes}</p> : null}
+      {notes ? <p className="mt-3 text-sm text-paper-2">{notes}</p> : null}
 
       {(artifactHash || registryTxHash) && (
         <div className="mt-4 grid gap-2">
-          {artifactHash ? <MonoHash label="ARTIFACT" value={artifactHash} /> : null}
-          {registryTxHash ? <MonoHash label="REGISTRY TX" value={registryTxHash} /> : null}
+          {artifactHash ? <MonoHash label="ARTIFACT" value={artifactHash} truncate={6} /> : null}
+          {registryTxHash ? <MonoHash label="REGISTRY TX" value={registryTxHash} truncate={6} /> : null}
         </div>
       )}
-    </GlassCard>
+    </Panel>
   );
 };

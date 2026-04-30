@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { ArrowPathIcon, BanknotesIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
-import { GlassCard } from "~~/components/harvverse/GlassCard";
 import { MonoHash } from "~~/components/harvverse/MonoHash";
+import { Panel } from "~~/components/harvverse/Panel";
 import { StatusPill } from "~~/components/harvverse/StatusPill";
 
 const fakeHash = (seed: number) => {
@@ -38,23 +38,23 @@ export const FundActions = ({ shortfallUnits, poolAddress }: FundActionsProps) =
   };
 
   return (
-    <GlassCard padding="lg" glow={funded ? "mint" : "gold"}>
+    <Panel padding="lg" variant={funded ? "hot" : "default"} crosshair>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <div className="eyebrow">Fund settlement pool</div>
-          <h3 className="mt-1 text-xl font-light tracking-tight text-harv-text">MockUSDC.transfer</h3>
+          <span className={funded ? "eyebrow-leaf" : "eyebrow-honey"}>FUND SETTLEMENT POOL</span>
+          <h3 className="font-display mt-2 text-2xl leading-none tracking-tight text-paper">MockUSDC.transfer</h3>
         </div>
         <StatusPill status={funded ? "funded" : "pending"} />
       </div>
 
-      <div className="mt-4 grid gap-2 text-xs">
-        <div className="flex items-center justify-between">
-          <span className="text-muted-harv">Pool address</span>
-        </div>
-        <MonoHash value={poolAddress} />
-        <div className="flex items-center justify-between border-t border-white/5 pt-2">
-          <span className="text-muted-harv">Amount (units)</span>
-          <span className="mono-hash text-harv-text">{Number(shortfallUnits).toLocaleString("en-US")}</span>
+      <div className="mt-5 space-y-3 text-xs">
+        <MonoHash label="POOL ADDRESS" value={poolAddress} truncate={6} />
+        <div
+          className="flex items-center justify-between border border-rule bg-ink-2 px-3 py-2"
+          style={{ borderRadius: 2, backgroundColor: "var(--color-ink-2)" }}
+        >
+          <span className="text-paper-2">Amount (units)</span>
+          <span className="font-mono text-sm text-paper">{Number(shortfallUnits).toLocaleString("en-US")}</span>
         </div>
       </div>
 
@@ -70,21 +70,21 @@ export const FundActions = ({ shortfallUnits, poolAddress }: FundActionsProps) =
 
       {txs.length > 0 ? (
         <div className="mt-5 space-y-2">
-          <div className="eyebrow">Recent funding transactions</div>
+          <span className="eyebrow-proof">RECENT FUNDING TXS</span>
           <ul className="space-y-2">
             {txs.map(tx => (
               <li key={tx} className="flex items-center gap-2">
-                <CheckCircleIcon className="h-3.5 w-3.5 text-[color:var(--color-harv-mint)]" />
-                <MonoHash value={tx} />
+                <CheckCircleIcon className="h-3.5 w-3.5 text-proof" />
+                <MonoHash value={tx} truncate={6} />
               </li>
             ))}
           </ul>
         </div>
       ) : null}
 
-      <p className="mt-5 text-[11px] text-muted-harv">
-        Custody wallet must be authorized for testnet pool funding. No real funds are moved.
+      <p className="mt-5 text-[11px] text-paper-3">
+        Custody wallet must be authorized for local pool funding. No real funds are moved.
       </p>
-    </GlassCard>
+    </Panel>
   );
 };

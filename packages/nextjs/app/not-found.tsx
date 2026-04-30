@@ -1,16 +1,22 @@
 import Link from "next/link";
+import { Panel } from "~~/components/harvverse/Panel";
 
 export default function NotFound() {
   return (
-    <div className="flex items-center h-full flex-1 justify-center bg-base-200">
-      <div className="text-center">
-        <h1 className="text-6xl font-bold m-0 mb-1">404</h1>
-        <h2 className="text-2xl font-semibold m-0">Page Not Found</h2>
-        <p className="text-base-content/70 m-0 mb-4">The page you&apos;re looking for doesn&apos;t exist.</p>
-        <Link href="/" className="btn btn-primary">
-          Go Home
+    <div className="flex flex-1 items-center justify-center px-4 py-20">
+      <Panel padding="xl" className="text-center" crosshair>
+        <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-paper-3">ERR · 404</div>
+        <h1
+          className="font-display mt-4 text-[clamp(4rem,8vw,7rem)] leading-none tracking-tight text-leaf"
+          style={{ fontVariationSettings: '"opsz" 144, "SOFT" 80' }}
+        >
+          off-grid.
+        </h1>
+        <p className="mt-3 text-paper-2">No lot, plan, or partnership lives at this coordinate.</p>
+        <Link href="/" className="btn btn-primary mt-6 inline-flex items-center gap-2">
+          Return to discovery
         </Link>
-      </div>
+      </Panel>
     </div>
   );
 }
