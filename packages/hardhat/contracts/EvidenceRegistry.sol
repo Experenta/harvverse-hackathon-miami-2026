@@ -28,4 +28,17 @@ contract EvidenceRegistry is AccessControl {
         require(evidenceHash != bytes32(0), "EvidenceRegistry: empty hash");
         emit EvidenceAttested(evidenceHash, subjectId, milestoneNumber, msg.sender, schemaName);
     }
+
+    function batchAttestEvidence(
+        bytes32[] calldata evidenceHashes,
+        uint256 subjectId,
+        uint256[] calldata milestoneNumbers,
+        string calldata schemaName
+    ) external onlyRole(ATTESTER_ROLE) {
+        require(evidenceHashes.length == milestoneNumbers.length, "EvidenceRegistry: length mismatch");
+        for (uint256 i = 0; i < evidenceHashes.length; i++) {
+            require(evidenceHashes[i] != bytes32(0), "EvidenceRegistry: empty hash");
+            emit EvidenceAttested(evidenceHashes[i], subjectId, milestoneNumbers[i], msg.sender, schemaName);
+        }
+    }
 }

@@ -11,6 +11,15 @@ interface IPartnershipRegistry {
     function farmerOf(uint256 partnershipId) external view returns (address);
 }
 
+interface ILotCertificate {
+    function updateMetadata(
+        uint256 tokenId,
+        uint256 yieldQQ,
+        uint256 scaScoreTenths,
+        uint256 returnUsdcUnits
+    ) external;
+}
+
 contract SettlementDistributor is AccessControl, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
@@ -21,16 +30,18 @@ contract SettlementDistributor is AccessControl, ReentrancyGuard {
     uint256 public constant BPS = 10_000;
     uint256 public constant YIELD_CAP_Y1_TENTHS = 80;
     uint256 public constant PRICE_FLOOR_CENTS = 250;
+    uint256 public constant PRICE_BASE_CENTS = 350; // $3.50/lb fixed (HVPLAN-ZAF-L02-2026)
+    uint256 public constant AGRONOMIC_COST_CENTS = 149_000; // $1,490 fixed (HVPLAN-ZAF-L02-2026)
 
     IERC20 public immutable usdc;
     IPartnershipRegistry public immutable registry;
+    ILotCertificate public certificate;
 
     struct SettlementInput {
         uint256 partnershipId;
         uint256 yieldTenthsQQ;
-        uint256 priceCentsPerLb;
-        uint256 agronomicCostCents;
         bytes32 evidenceHash;
+        uint256 scaScoreTenths;
     }
 
     mapping(uint256 => bool) public settled;
@@ -41,7 +52,8 @@ contract SettlementDistributor is AccessControl, ReentrancyGuard {
         uint256 profitCents,
         uint256 farmerCents,
         uint256 partnerCents,
-        bytes32 evidenceHash
+        bytes32 evidenceHash,
+        uint256 scaScoreTenths
     );
 
     constructor(address _usdc, address _registry, address admin) {
@@ -51,6 +63,10 @@ contract SettlementDistributor is AccessControl, ReentrancyGuard {
         _grantRole(SETTLEMENT_OPERATOR_ROLE, admin);
     }
 
+    function setCertificate(address _certificate) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        certificate = ILotCertificate(_certificate);
+    }
+
     function preview(
         SettlementInput calldata input
     ) public pure returns (uint256 revenueCents, uint256 profitCents, uint256 farmerCents, uint256 partnerCents) {
@@ -58,10 +74,10 @@ contract SettlementDistributor is AccessControl, ReentrancyGuard {
             ? YIELD_CAP_Y1_TENTHS
             : input.yieldTenthsQQ;
 
-        uint256 effectivePrice = input.priceCentsPerLb < PRICE_FLOOR_CENTS ? PRICE_FLOOR_CENTS : input.priceCentsPerLb;
+        uint256 effectivePrice = PRICE_BASE_CENTS < PRICE_FLOOR_CENTS ? PRICE_FLOOR_CENTS : PRICE_BASE_CENTS;
 
         revenueCents = (cappedYieldTenths * PARCHMENT_TO_GREEN_TENTHS * effectivePrice) / 100;
-        profitCents = revenueCents > input.agronomicCostCents ? revenueCents - input.agronomicCostCents : 0;
+        profitCents = revenueCents > AGRONOMIC_COST_CENTS ? revenueCents - AGRONOMIC_COST_CENTS : 0;
         farmerCents = (profitCents * FARMER_SHARE_BPS) / BPS;
         partnerCents = profitCents - farmerCents;
     }
@@ -84,13 +100,23 @@ contract SettlementDistributor is AccessControl, ReentrancyGuard {
             usdc.safeTransfer(partner, partnerCents * 10_000);
         }
 
+        try
+            certificate.updateMetadata(
+                input.partnershipId,
+                input.yieldTenthsQQ,
+                input.scaScoreTenths,
+                partnerCents * 10_000
+            )
+        {} catch {}
+
         emit SettlementExecuted(
             input.partnershipId,
             revenueCents,
             profitCents,
             farmerCents,
             partnerCents,
-            input.evidenceHash
+            input.evidenceHash,
+            input.scaScoreTenths
         );
     }
 }
