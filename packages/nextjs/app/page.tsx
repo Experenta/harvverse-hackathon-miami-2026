@@ -1,79 +1,269 @@
-"use client";
-
 import Link from "next/link";
-import { Address } from "@scaffold-ui/components";
-import type { NextPage } from "next";
-import { hardhat } from "viem/chains";
-import { useAccount } from "wagmi";
-import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { useTargetNetwork } from "~~/hooks/scaffold-eth";
+import { ArrowRightIcon, BeakerIcon, CheckBadgeIcon, CubeTransparentIcon, EyeIcon } from "@heroicons/react/24/outline";
+import { CoffeeBeanArt } from "~~/components/harvverse/CoffeeBeanArt";
+import { GlassCard } from "~~/components/harvverse/GlassCard";
+import { GridBackdrop } from "~~/components/harvverse/GridBackdrop";
+import { HeroParticleField } from "~~/components/harvverse/HeroParticleField";
+import { LotCard } from "~~/components/harvverse/LotCard";
+import { MetricCard } from "~~/components/harvverse/MetricCard";
+import { ProofTimeline } from "~~/components/harvverse/ProofTimeline";
+import { Section } from "~~/components/harvverse/Section";
+import { SettlementProofPanel } from "~~/components/harvverse/SettlementProofPanel";
+import { TopographicLines } from "~~/components/harvverse/TopographicLines";
+// TODO(phase3D): replace mock imports with useQuery(api.partner.lots.*) when integrating
+import { getActiveLot, listLots } from "~~/lib/mock/lots";
+import { getPlanByCode, getPlanForLot } from "~~/lib/mock/plans";
+import { mockSettlements } from "~~/lib/mock/settlements";
 
-const Home: NextPage = () => {
-  const { address: connectedAddress } = useAccount();
-  const { targetNetwork } = useTargetNetwork();
+const HOW_IT_WORKS = [
+  {
+    icon: EyeIcon,
+    title: "Discover",
+    desc: "Inspect lot data, agronomic context, and locked plan terms before any wallet prompt.",
+  },
+  {
+    icon: CheckBadgeIcon,
+    title: "Sign",
+    desc: "Approve demo MockUSDC, then open the partnership from your wallet with explicit intent.",
+  },
+  {
+    icon: BeakerIcon,
+    title: "Evidence",
+    desc: "Six milestone fixtures are attested onchain by authorized verifier roles.",
+  },
+  {
+    icon: CubeTransparentIcon,
+    title: "Settle",
+    desc: "Deterministic settlement computes revenue and split from locked plan terms and evidence.",
+  },
+];
+
+const Home = () => {
+  const activeLot = getActiveLot();
+  const activePlan = getPlanForLot(activeLot.code);
+  const featuredSettlement = mockSettlements.find(s => s.status === "confirmed") ?? mockSettlements[0];
+  const lots = listLots();
 
   return (
     <>
-      <div className="flex items-center flex-col grow pt-10">
-        <div className="px-5">
-          <h1 className="text-center">
-            <span className="block text-2xl mb-2">Welcome to</span>
-            <span className="block text-4xl font-bold">Scaffold-ETH 2</span>
-          </h1>
-          <div className="flex justify-center items-center space-x-2 flex-col">
-            <p className="my-2 font-medium">Connected Address:</p>
-            <Address
-              address={connectedAddress}
-              chain={targetNetwork}
-              blockExplorerAddressLink={
-                targetNetwork.id === hardhat.id ? `/blockexplorer/address/${connectedAddress}` : undefined
-              }
-            />
+      {/* === Hero ============================================================ */}
+      <section className="relative isolate overflow-hidden">
+        <GridBackdrop variant="dense" className="opacity-70" />
+        <TopographicLines intensity="normal" />
+        <HeroParticleField />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -left-40 top-20 h-[420px] w-[420px] rounded-full bg-[color:var(--color-harv-primary)]/30 blur-3xl"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute right-[-160px] top-[-80px] h-[520px] w-[520px] rounded-full bg-[color:var(--color-harv-mint)]/8 blur-3xl"
+        />
+
+        <div className="relative mx-auto grid w-full max-w-7xl grid-cols-1 gap-10 px-4 pb-20 pt-16 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16 lg:px-10 lg:pb-28 lg:pt-24">
+          <div className="flex flex-col items-start">
+            <h1 className="mt-6 max-w-2xl text-4xl font-light leading-[1.05] tracking-tight text-harv-text sm:text-5xl lg:text-6xl">
+              Own a slice of <span className="text-gradient-harv">single-origin coffee</span>,{" "}
+              <span className="whitespace-nowrap">on-chain proofs</span> included.
+            </h1>
+
+            <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-harv sm:text-lg">
+              Harvverse maps specialty coffee lots to accountable, proof-first partnerships. Review agronomy, sign with
+              your wallet, track milestone evidence, and settle from locked terms.
+            </p>
+
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <Link
+                href={`/partner/lots/${activeLot.code}`}
+                className="btn btn-primary btn-md inline-flex items-center gap-2"
+              >
+                View Lots
+                <ArrowRightIcon className="h-4 w-4" />
+              </Link>
+              <Link
+                href="/partner/dashboard"
+                className="btn btn-ghost btn-md border border-white/10 text-harv-text hover:border-[color:var(--color-harv-mint)]/30"
+              >
+                See your lots
+              </Link>
+            </div>
+
+            <div className="mt-12 grid w-full max-w-5xl grid-cols-2 gap-3 sm:grid-cols-4">
+              <MetricCard
+                label="Active lots"
+                value={lots.length}
+                mono
+                align="center"
+                className="min-h-[160px]"
+                valueClassName="text-4xl"
+              />
+              <MetricCard
+                label="Origin"
+                value={
+                  <span className="inline-flex flex-col items-center px-2 text-[0.78em] leading-tight">
+                    <span>Central</span>
+                    <span>America</span>
+                  </span>
+                }
+                tone="muted"
+                align="center"
+                className="min-h-[160px]"
+                valueClassName="text-[clamp(1rem,1.5vw,1.6rem)] leading-tight"
+              />
+              <MetricCard
+                label="Avg ticket"
+                value="$3.4k"
+                tone="mint"
+                align="center"
+                className="min-h-[160px]"
+                valueClassName="text-4xl"
+              />
+              <MetricCard
+                label="Chain"
+                value={
+                  <span className="inline-flex flex-col items-center px-2 text-[0.78em] leading-tight">
+                    <span>Hard</span>
+                    <span>hat</span>
+                  </span>
+                }
+                tone="gold"
+                align="center"
+                className="min-h-[160px]"
+                valueClassName="text-[clamp(1.2rem,1.6vw,1.8rem)]"
+              />
+            </div>
           </div>
 
-          <p className="text-center text-lg">
-            Get started by editing{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              packages/nextjs/app/page.tsx
-            </code>
-          </p>
-          <p className="text-center text-lg">
-            Edit your smart contract{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              YourContract.sol
-            </code>{" "}
-            in{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              packages/hardhat/contracts
-            </code>
-          </p>
-        </div>
-
-        <div className="grow bg-base-300 w-full mt-16 px-8 py-12">
-          <div className="flex justify-center items-center gap-12 flex-col md:flex-row">
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <BugAntIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Tinker with your smart contract using the{" "}
-                <Link href="/debug" passHref className="link">
-                  Debug Contracts
-                </Link>{" "}
-                tab.
-              </p>
-            </div>
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <MagnifyingGlassIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Explore your local transactions with the{" "}
-                <Link href="/blockexplorer" passHref className="link">
-                  Block Explorer
-                </Link>{" "}
-                tab.
-              </p>
-            </div>
+          <div className="relative flex items-center justify-center">
+            <CoffeeBeanArt className="relative aspect-square w-full max-w-[520px]" />
           </div>
         </div>
-      </div>
+
+        <div className="divider-harv" />
+      </section>
+
+      {/* === How it works ==================================================== */}
+      <Section
+        eyebrow="Protocol flow · 4 steps"
+        title="From discovery to deterministic settlement"
+        description="Each step writes verifiable state. Frontend guides decisions; onchain records prove execution."
+      >
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {HOW_IT_WORKS.map((step, idx) => (
+            <GlassCard key={step.title} padding="lg" className="relative">
+              <div className="flex items-start justify-between">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[color:var(--color-harv-mint)]/25 bg-[color:var(--color-harv-mint)]/8 text-[color:var(--color-harv-mint)]">
+                  <step.icon className="h-5 w-5" />
+                </span>
+                <span className="font-mono text-xs text-muted-harv">0{idx + 1}</span>
+              </div>
+              <h3 className="mt-5 text-lg font-medium text-harv-text">{step.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-harv">{step.desc}</p>
+            </GlassCard>
+          ))}
+        </div>
+      </Section>
+
+      {/* === Active lot teaser =============================================== */}
+      <Section
+        eyebrow="Featured lot"
+        title={
+          <>
+            {activeLot.farmName} · <span className="text-muted-harv">{activeLot.region}</span>
+          </>
+        }
+        description={activeLot.summary}
+        actions={
+          <Link
+            href={`/partner/lots/${activeLot.code}`}
+            className="btn btn-primary btn-sm inline-flex items-center gap-1.5"
+          >
+            Open lot
+            <ArrowRightIcon className="h-4 w-4" />
+          </Link>
+        }
+      >
+        <LotCard lot={activeLot} plan={activePlan} layout="feature" />
+      </Section>
+
+      {/* === Proof preview =================================================== */}
+      <Section
+        eyebrow="What proof looks like"
+        title="Every step writes verifiable state"
+        description="From signature to payout, Harvverse keeps the audit trail visible and deterministic."
+      >
+        <div className="grid gap-6 lg:grid-cols-[1fr_1.4fr]">
+          <GlassCard padding="lg">
+            <div className="eyebrow">Partnership timeline</div>
+            <h3 className="mt-2 text-2xl font-light tracking-tight text-harv-text">Signed → settled</h3>
+            <p className="mt-2 text-sm text-muted-harv">
+              A simplified view of state transitions for the featured partnership.
+            </p>
+            <div className="mt-6">
+              <ProofTimeline
+                steps={[
+                  {
+                    id: "proposal",
+                    label: "Proposal created",
+                    timestamp: "T-26h",
+                    state: "done",
+                    description: "Locked from canonical lot/plan terms.",
+                  },
+                  {
+                    id: "approve",
+                    label: "MockUSDC approved",
+                    timestamp: "T-25h 58m",
+                    state: "done",
+                  },
+                  {
+                    id: "open",
+                    label: "Partnership opened",
+                    timestamp: "T-25h 56m",
+                    state: "done",
+                    hash: "0x4d3a9b2e8c1f7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d1e0f9a8b7c6d5e4f3a2b",
+                  },
+                  {
+                    id: "milestones",
+                    label: "Milestones M1–M6 attested",
+                    timestamp: "T-3h",
+                    state: "done",
+                  },
+                  {
+                    id: "settlement",
+                    label: "Deterministic settlement",
+                    timestamp: "T-0",
+                    state: "current",
+                    description: "Awaiting onchain settle() execution.",
+                  },
+                ]}
+              />
+            </div>
+          </GlassCard>
+
+          <SettlementProofPanel settlement={featuredSettlement} />
+        </div>
+      </Section>
+
+      {/* === Other lots ====================================================== */}
+      <Section
+        eyebrow="Browse"
+        title="More lots in the pipeline"
+        description="Each lot has a single locked plan. New lots appear as farmers and verifiers register them."
+        actions={
+          <Link
+            href="/partner/lots"
+            className="btn btn-ghost btn-sm border border-white/10 text-harv-text hover:border-[color:var(--color-harv-mint)]/30"
+          >
+            All lots
+          </Link>
+        }
+      >
+        <div className="grid gap-5 lg:grid-cols-2">
+          {lots.slice(0, 4).map(lot => (
+            <LotCard key={lot.code} lot={lot} plan={getPlanByCode(lot.activePlanCode)} />
+          ))}
+        </div>
+      </Section>
     </>
   );
 };
