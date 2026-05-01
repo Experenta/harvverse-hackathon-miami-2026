@@ -8,16 +8,19 @@
   --animate-drift: drift 32s linear infinite;
   --animate-pulse-glow: pulseGlow 4s ease-in-out infinite;
 
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-harv-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-plex-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --color-harv-bg: #081412;
+  /* Harvverse design system (Design System Harvverse.pdf) */
+  --color-harv-bg: #001020;
+  --color-harv-text: #eeeeee;
+  --color-harv-muted: color-mix(in oklab, #67b9c1 42%, #001020);
+  --color-harv-mint: #93d832;
+  --color-harv-purple: #6766c4;
+  --color-harv-cyan: #67b9c1;
   --color-harv-primary: #0e5e4b;
   --color-harv-secondary: #22a06b;
   --color-harv-accent: #c8a96b;
-  --color-harv-mint: #7fffd4;
-  --color-harv-text: #f5f7f6;
-  --color-harv-muted: #9fb5ad;
 }
 
 @plugin "daisyui" {
@@ -27,22 +30,22 @@
 @plugin "daisyui/theme" {
   name: "harvverse";
 
-  --color-primary: #22a06b;
-  --color-primary-content: #061310;
-  --color-secondary: #0e5e4b;
-  --color-secondary-content: #f5f7f6;
-  --color-accent: #c8a96b;
-  --color-accent-content: #1a130a;
-  --color-neutral: #0d1f1b;
-  --color-neutral-content: #f5f7f6;
-  --color-base-100: #0a1815;
-  --color-base-200: #081412;
-  --color-base-300: #050d0c;
-  --color-base-content: #f5f7f6;
-  --color-info: #7fffd4;
-  --color-info-content: #06120e;
-  --color-success: #34eeb6;
-  --color-success-content: #06120e;
+  --color-primary: #6766c4;
+  --color-primary-content: #eeeeee;
+  --color-secondary: #93d832;
+  --color-secondary-content: #001020;
+  --color-accent: #67b9c1;
+  --color-accent-content: #001020;
+  --color-neutral: #071828;
+  --color-neutral-content: #eeeeee;
+  --color-base-100: #031018;
+  --color-base-200: #001020;
+  --color-base-300: #000a14;
+  --color-base-content: #eeeeee;
+  --color-info: #67b9c1;
+  --color-info-content: #001020;
+  --color-success: #93d832;
+  --color-success-content: #001020;
   --color-warning: #c8a96b;
   --color-warning-content: #1a130a;
   --color-error: #ff8863;
@@ -51,7 +54,7 @@
   --radius-field: 0.5rem;
   --radius-box: 0.75rem;
   --tt-tailw: 6px;
-  --tt-bg: #050d0c;
+  --tt-bg: #000a14;
 }
 
 @layer base {
@@ -74,9 +77,9 @@
 
   body {
     background-image:
-      radial-gradient(900px 600px at -10% -20%, color-mix(in oklab, #0e5e4b 18%, transparent), transparent 60%),
-      radial-gradient(800px 500px at 110% 10%, color-mix(in oklab, #22a06b 10%, transparent), transparent 60%),
-      radial-gradient(1200px 800px at 50% 120%, color-mix(in oklab, #c8a96b 6%, transparent), transparent 70%);
+      radial-gradient(900px 600px at -10% -20%, color-mix(in oklab, #6766c4 16%, transparent), transparent 60%),
+      radial-gradient(800px 500px at 110% 10%, color-mix(in oklab, #93d832 8%, transparent), transparent 58%),
+      radial-gradient(1100px 700px at 50% 115%, color-mix(in oklab, #67b9c1 10%, transparent), transparent 72%);
     background-attachment: fixed;
   }
 
@@ -94,8 +97,8 @@
   }
 
   ::selection {
-    background-color: color-mix(in oklab, var(--color-harv-mint) 35%, transparent);
-    color: var(--color-harv-bg);
+    background-color: color-mix(in oklab, var(--color-harv-mint) 45%, transparent);
+    color: #001020;
   }
 }
 
@@ -107,14 +110,14 @@
 }
 
 .glass {
-  background-color: rgba(255, 255, 255, 0.04);
+  background-color: color-mix(in oklab, #0a1628 72%, var(--color-harv-purple) 28%);
   backdrop-filter: blur(8px) saturate(115%);
   -webkit-backdrop-filter: blur(8px) saturate(115%);
-  border: 1px solid color-mix(in oklab, var(--color-harv-text) 8%, transparent);
+  border: 1px solid color-mix(in oklab, var(--color-harv-text) 16%, transparent);
   border-radius: 0.875rem;
   box-shadow:
-    inset 0 1px 0 color-mix(in oklab, var(--color-harv-text) 10%, transparent),
-    0 12px 40px -16px rgba(0, 0, 0, 0.6);
+    inset 0 1px 0 color-mix(in oklab, var(--color-harv-text) 12%, transparent),
+    0 12px 40px -16px rgba(0, 0, 0, 0.7);
 }
 
 .glass-strong {
@@ -186,15 +189,50 @@
 }
 
 .text-gradient-harv {
-  background: linear-gradient(
-    135deg,
-    var(--color-harv-text) 0%,
-    var(--color-harv-mint) 60%,
-    var(--color-harv-accent) 100%
-  );
+  background: linear-gradient(135deg, var(--color-harv-text) 0%, var(--color-harv-mint) 55%, var(--color-harv-cyan) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+}
+
+.harv-hero-highlight {
+  display: inline-block;
+  background-color: var(--color-harv-mint);
+  color: #001020;
+  font-weight: 700;
+  padding: 0.1em 0.55em 0.12em 0.45em;
+  transform: skewX(-10deg);
+  border-radius: 0.2rem;
+  vertical-align: baseline;
+  line-height: inherit;
+}
+
+/* Counter-skew so the text stays upright */
+.harv-hero-highlight > span {
+  display: inline-block;
+  transform: skewX(10deg);
+}
+
+.harv-stats-ribbon {
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--color-harv-purple) 28%, transparent) 0%,
+    color-mix(in oklab, var(--color-harv-purple) 8%, transparent) 45%,
+    transparent 100%
+  );
+  border: 1px solid color-mix(in oklab, var(--color-harv-mint) 35%, transparent);
+  border-radius: 1.25rem;
+}
+
+.harv-protocol-card {
+  background: linear-gradient(
+    165deg,
+    color-mix(in oklab, var(--color-harv-purple) 38%, #0a1628) 0%,
+    color-mix(in oklab, #0a1628 80%, var(--color-harv-purple)) 100%
+  );
+  border: 1px solid color-mix(in oklab, var(--color-harv-text) 18%, transparent);
+  border-bottom: 2px solid var(--color-harv-mint);
+  border-radius: 0.875rem;
 }
 
 .eyebrow {
@@ -224,12 +262,16 @@
 }
 
 .btn.btn-primary {
-  background: linear-gradient(135deg, #22a06b 0%, #0e5e4b 100%);
-  border-color: color-mix(in oklab, var(--color-harv-mint) 18%, transparent);
-  color: #061310;
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--color-harv-purple) 88%, #001020) 0%,
+    color-mix(in oklab, var(--color-harv-purple) 65%, #001020) 100%
+  );
+  border: 1px solid var(--color-harv-mint);
+  color: var(--color-harv-text);
   box-shadow:
-    inset 0 1px 0 color-mix(in oklab, var(--color-harv-mint) 25%, transparent),
-    0 8px 28px -10px color-mix(in oklab, #22a06b 60%, transparent);
+    inset 0 1px 0 color-mix(in oklab, var(--color-harv-mint) 22%, transparent),
+    0 10px 32px -12px color-mix(in oklab, var(--color-harv-purple) 55%, transparent);
 }
 
 .btn.btn-primary:hover {

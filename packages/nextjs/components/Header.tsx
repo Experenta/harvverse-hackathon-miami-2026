@@ -52,16 +52,15 @@ const HeaderMenuLinks = ({ inDrawer = false }: { inDrawer?: boolean }) => {
           <li key={href}>
             <Link
               href={href}
-              className={`relative inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm transition ${
+              className={`relative inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-semibold uppercase tracking-wider transition ${
                 inDrawer ? "w-full" : ""
               } ${
-                isActive ? "bg-white/5 text-[color:var(--color-harv-mint)]" : "text-harv-text/80 hover:text-harv-text"
+                isActive
+                  ? "bg-[color:var(--color-harv-mint)] text-[color:var(--color-harv-bg)] font-medium"
+                  : "text-harv-text/80 hover:text-harv-text"
               }`}
             >
               {label}
-              {isActive ? (
-                <span className="absolute -bottom-0.5 left-3 right-3 h-px bg-[color:var(--color-harv-mint)]" />
-              ) : null}
             </Link>
           </li>
         );

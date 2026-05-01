@@ -6,9 +6,11 @@ type MetricCardProps = {
   value: ReactNode;
   delta?: string;
   hint?: string;
-  tone?: "default" | "mint" | "gold" | "muted";
+  tone?: "default" | "mint" | "gold" | "muted" | "cyan";
   mono?: boolean;
   align?: "start" | "center";
+  /** Strip glass panel chrome for embedding inside ribbons or dense grids */
+  embedded?: boolean;
   className?: string;
   valueClassName?: string;
 };
@@ -18,6 +20,7 @@ const tones: Record<NonNullable<MetricCardProps["tone"]>, string> = {
   mint: "text-[color:var(--color-harv-mint)]",
   gold: "text-[color:var(--color-harv-accent)]",
   muted: "text-muted-harv",
+  cyan: "text-[color:var(--color-harv-cyan)]",
 };
 
 export const MetricCard = ({
@@ -28,6 +31,7 @@ export const MetricCard = ({
   tone = "default",
   mono = false,
   align = "start",
+  embedded = false,
   className,
   valueClassName,
 }: MetricCardProps) => {
@@ -35,6 +39,7 @@ export const MetricCard = ({
 
   return (
     <GlassCard
+      variant={embedded ? "ghost" : "default"}
       padding="md"
       className={`${isCentered ? "text-center" : ""} ${className ?? ""} ${isCentered ? "flex flex-col items-center" : ""}`}
     >

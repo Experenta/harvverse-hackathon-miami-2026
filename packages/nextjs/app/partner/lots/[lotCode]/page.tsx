@@ -8,6 +8,8 @@ import {
   ScaleIcon,
 } from "@heroicons/react/24/outline";
 import { GlassCard } from "~~/components/harvverse/GlassCard";
+import { HarvverseLiveAgent } from "~~/components/harvverse/HarvverseLiveAgent";
+import { InvestmentLivePanel } from "~~/components/harvverse/InvestmentLivePanel";
 import { LotMapPreview } from "~~/components/harvverse/LotMapPreview";
 import { MetricCard } from "~~/components/harvverse/MetricCard";
 import { MonoHash } from "~~/components/harvverse/MonoHash";
@@ -40,6 +42,11 @@ const LotDetailPage = async ({ params }: LotPageProps) => {
   const plan = getPlanForLot(lot.code);
   const pendingProposal = getActivePendingProposal();
   const targetProposalId = pendingProposal?.lotCode === lot.code ? pendingProposal.id : "prop_zafiro_001_pending";
+  const proposalHref = `/partner/proposals/${targetProposalId}`;
+  const ticketStr = plan ? formatCents(plan.ticketCents) : "—";
+  const yieldStr = plan ? `${(plan.yieldCapY1TenthsQQ / 10).toFixed(1)} qq` : "—";
+  const splitStr = plan ? `${(plan.splitFarmerBps / 100).toFixed(0)}%` : "—";
+  const partnerShareDemo = pendingProposal?.lotCode === lot.code ? formatCents(pendingProposal.partnerCents) : "—";
 
   return (
     <Section
@@ -55,6 +62,39 @@ const LotDetailPage = async ({ params }: LotPageProps) => {
       description={lot.summary}
       actions={<StatusPill status={lot.status} />}
     >
+      <div className="mb-8 grid gap-4 lg:grid-cols-2">
+        <HarvverseLiveAgent
+          variant="lot"
+          lotCode={lot.code}
+          farmName={lot.farmName}
+          region={`${lot.region}, ${lot.country}`}
+          ticketLabel={`${ticketStr} USDC`}
+          yieldCapLabel={yieldStr}
+          splitLabel={`${splitStr} farmer`}
+        />
+        <InvestmentLivePanel
+          ctaHref={proposalHref}
+          rows={[
+            { label: "Lot", value: lot.code.toUpperCase() },
+            { label: "Area", value: `${lot.hectares.toFixed(1)} ha` },
+            {
+              label: "Type",
+              value: pendingProposal?.partnershipType === "phygital" ? "Phygital" : "On-chain partnership",
+            },
+            { label: "Ticket", value: ticketStr === "—" ? "—" : `${ticketStr} USDC` },
+            { label: "Split", value: splitStr === "—" ? "—" : `${splitStr} farmer` },
+            { label: "Lot size", value: `${lot.hectares.toFixed(1)} ha · ${lot.varietal}` },
+            {
+              label: "Year-1 return (partner share · demo)",
+              value: partnerShareDemo,
+              highlight: partnerShareDemo !== "—",
+            },
+            { label: "3-year ROI", value: "Demo projection · not guaranteed", highlight: true },
+            { label: "Phygital yield", value: yieldStr === "—" ? "—" : `${yieldStr} cap`, highlight: true },
+          ]}
+        />
+      </div>
+
       <div className="grid gap-6 lg:grid-cols-[1.6fr_1fr]">
         <div className="space-y-6">
           <GlassCard padding="none" className="overflow-hidden">
@@ -182,6 +222,9 @@ const LotDetailPage = async ({ params }: LotPageProps) => {
           <GlassCard padding="lg" glow="mint">
             <div className="eyebrow">Sign your partnership</div>
             <h3 className="mt-2 text-2xl font-light tracking-tight text-harv-text">Create proposal</h3>
+            <p className="mt-2 text-sm text-muted-harv">
+              Numbers above mirror the live investment panel. Continue here for hashes and farmer payout routing.
+            </p>
             <div className="mt-4 grid gap-2 text-sm">
               <div className="flex items-center justify-between border-b border-white/5 pb-2">
                 <span className="text-muted-harv">Ticket</span>
@@ -205,7 +248,7 @@ const LotDetailPage = async ({ params }: LotPageProps) => {
             </div>
 
             <Link
-              href={`/partner/proposals/${targetProposalId}`}
+              href={proposalHref}
               className="btn btn-primary mt-5 w-full inline-flex items-center justify-center gap-2"
             >
               Create proposal

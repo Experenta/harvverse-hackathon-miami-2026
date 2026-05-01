@@ -1,18 +1,20 @@
 import { PartnerDashboardRoleGate } from "./PartnerDashboardRoleGate";
 import { CertificateProofCard } from "~~/components/harvverse/CertificateProofCard";
 import { GlassCard } from "~~/components/harvverse/GlassCard";
+import { HarvverseLiveAgent } from "~~/components/harvverse/HarvverseLiveAgent";
 import { MetricCard } from "~~/components/harvverse/MetricCard";
 import { MilestoneStep } from "~~/components/harvverse/MilestoneStep";
 import { Section } from "~~/components/harvverse/Section";
 import { SettlementProofPanel } from "~~/components/harvverse/SettlementProofPanel";
 import { buildMilestoneRows } from "~~/lib/mock/evidence";
-import { getLotByCode } from "~~/lib/mock/lots";
+import { getLotByCode, listLots } from "~~/lib/mock/lots";
 // TODO(phase4E/5F/6E): replace with useQuery(api.partner.partnerships.myDashboard)
 import { listPartnerships } from "~~/lib/mock/partnerships";
 import { getSettlementForPartnership } from "~~/lib/mock/settlements";
 
 const PartnerDashboardPage = () => {
   const partnerships = listPartnerships();
+  const lotsPreview = listLots().map(l => ({ code: l.code, name: l.farmName }));
 
   return (
     <PartnerDashboardRoleGate>
@@ -21,6 +23,8 @@ const PartnerDashboardPage = () => {
         title="Your coffee partnerships"
         description="Each partnership shows its certificate proof, milestone timeline, and (when available) the deterministic settlement panel."
       >
+        <HarvverseLiveAgent variant="dashboard" lotsPreview={lotsPreview} className="mb-10" />
+
         <div className="mb-8 grid gap-3 sm:grid-cols-3">
           <MetricCard
             label="Active partnerships"

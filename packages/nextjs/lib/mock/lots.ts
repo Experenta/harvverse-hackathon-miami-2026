@@ -19,7 +19,7 @@ export const mockLots: Lot[] = [
     status: "available",
     onchainLotId: 1,
     activePlanCode: "zafiro-001-y1",
-    cover: "/harvverse/lots/zafiro.svg",
+    cover: "/harvverse/lots/zafiro-cover.jpg",
   },
   {
     code: "zafiro-002",

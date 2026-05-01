@@ -1,4 +1,4 @@
-import { Geist, IBM_Plex_Mono } from "next/font/google";
+import { IBM_Plex_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "@rainbow-me/rainbowkit/styles.css";
 import "@scaffold-ui/components/styles.css";
 import { ScaffoldEthAppWithProviders } from "~~/components/ScaffoldEthAppWithProviders";
@@ -6,9 +6,11 @@ import { ThemeProvider } from "~~/components/ThemeProvider";
 import "~~/styles/globals.css";
 import { getMetadata } from "~~/utils/scaffold-eth/getMetadata";
 
-const geistSans = Geist({
+/** Plus Jakarta Sans approximates the Trenda family from the Harvverse design PDF; swap for local Trenda via @font-face when licensed. */
+const harvSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-geist-sans",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-harv-sans",
   display: "swap",
 });
 
@@ -31,7 +33,7 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
       lang="en"
       suppressHydrationWarning
       data-theme="harvverse"
-      className={`${geistSans.variable} ${plexMono.variable}`}
+      className={`${harvSans.variable} ${plexMono.variable}`}
     >
       <body className="antialiased">
         <ThemeProvider attribute="data-theme" defaultTheme="harvverse" forcedTheme="harvverse" enableSystem={false}>

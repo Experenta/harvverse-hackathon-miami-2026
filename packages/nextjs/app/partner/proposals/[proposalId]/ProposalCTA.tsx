@@ -104,7 +104,6 @@ export const ProposalCTA = ({ proposal }: ProposalCTAProps) => {
         </div>
       </div>
 
-      {/* Step indicator */}
       <ol className="grid grid-cols-2 gap-3 text-xs">
         <li
           className={`flex items-center gap-2 rounded-lg border px-3 py-2 ${
@@ -134,7 +133,6 @@ export const ProposalCTA = ({ proposal }: ProposalCTAProps) => {
         </li>
       </ol>
 
-      {/* Action */}
       {state === "rejected" ? (
         <div className="flex items-start gap-2 rounded-xl border border-[#ff8863]/30 bg-[#ff8863]/5 p-3 text-xs text-[#ff8863]">
           <ExclamationTriangleIcon className="mt-0.5 h-4 w-4 shrink-0" />

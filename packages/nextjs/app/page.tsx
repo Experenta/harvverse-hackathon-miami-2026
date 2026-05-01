@@ -1,14 +1,20 @@
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowRightIcon, BeakerIcon, CheckBadgeIcon, CubeTransparentIcon, EyeIcon } from "@heroicons/react/24/outline";
-import { CoffeeBeanArt } from "~~/components/harvverse/CoffeeBeanArt";
+import {
+  ArrowRightIcon,
+  CheckBadgeIcon,
+  CubeTransparentIcon,
+  EyeIcon,
+  MagnifyingGlassIcon,
+} from "@heroicons/react/24/outline";
 import { GlassCard } from "~~/components/harvverse/GlassCard";
 import { GridBackdrop } from "~~/components/harvverse/GridBackdrop";
 import { HeroParticleField } from "~~/components/harvverse/HeroParticleField";
 import { LotCard } from "~~/components/harvverse/LotCard";
-import { MetricCard } from "~~/components/harvverse/MetricCard";
 import { ProofTimeline } from "~~/components/harvverse/ProofTimeline";
 import { Section } from "~~/components/harvverse/Section";
 import { SettlementProofPanel } from "~~/components/harvverse/SettlementProofPanel";
+import { StatsArc } from "~~/components/harvverse/StatsArc";
 import { TopographicLines } from "~~/components/harvverse/TopographicLines";
 // TODO(phase3D): replace mock imports with useQuery(api.partner.lots.*) when integrating
 import { getActiveLot, listLots } from "~~/lib/mock/lots";
@@ -27,7 +33,7 @@ const HOW_IT_WORKS = [
     desc: "Approve demo MockUSDC, then open the partnership from your wallet with explicit intent.",
   },
   {
-    icon: BeakerIcon,
+    icon: MagnifyingGlassIcon,
     title: "Evidence",
     desc: "Six milestone fixtures are attested onchain by authorized verifier roles.",
   },
@@ -60,83 +66,70 @@ const Home = () => {
           className="pointer-events-none absolute right-[-160px] top-[-80px] h-[520px] w-[520px] rounded-full bg-[color:var(--color-harv-mint)]/8 blur-3xl"
         />
 
-        <div className="relative mx-auto grid w-full max-w-7xl grid-cols-1 gap-10 px-4 pb-20 pt-16 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16 lg:px-10 lg:pb-28 lg:pt-24">
-          <div className="flex flex-col items-start">
-            <h1 className="mt-6 max-w-2xl text-4xl font-light leading-[1.05] tracking-tight text-harv-text sm:text-5xl lg:text-6xl">
-              Own a slice of <span className="text-gradient-harv">single-origin coffee</span>,{" "}
-              <span className="whitespace-nowrap">on-chain proofs</span> included.
-            </h1>
+        {/* ── Row 1: heading + image side by side ────────────────────── */}
+        <div className="relative mx-auto w-full max-w-7xl px-4 pt-16 sm:px-6 lg:px-10 lg:pt-24">
+          <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:gap-16">
+            {/* Left: heading + description */}
+            <div className="flex flex-col items-start">
+              <h1 className="mt-6 max-w-2xl text-4xl font-semibold leading-[1.55] tracking-tight text-harv-text sm:text-5xl lg:text-[3.25rem] lg:leading-[1.45]">
+                Own a slice of{" "}
+                <span className="harv-hero-highlight">
+                  <span>Single-Origin Coffee</span>
+                </span>
+                , on-chain proofs included.
+              </h1>
 
-            <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-harv sm:text-lg">
-              Harvverse maps specialty coffee lots to accountable, proof-first partnerships. Review agronomy, sign with
-              your wallet, track milestone evidence, and settle from locked terms.
-            </p>
-
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Link
-                href={`/partner/lots/${activeLot.code}`}
-                className="btn btn-primary btn-md inline-flex items-center gap-2"
-              >
-                View Lots
-                <ArrowRightIcon className="h-4 w-4" />
-              </Link>
-              <Link
-                href="/partner/dashboard"
-                className="btn btn-ghost btn-md border border-white/10 text-harv-text hover:border-[color:var(--color-harv-mint)]/30"
-              >
-                See your lots
-              </Link>
+              <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-harv sm:text-lg">
+                Harvverse maps specialty coffee lots to accountable, proof-first partnerships. Review agronomy, sign
+                with your wallet, track milestone evidence, and settle from locked terms.
+              </p>
             </div>
 
-            <div className="mt-12 grid w-full max-w-5xl grid-cols-2 gap-3 sm:grid-cols-4">
-              <MetricCard
-                label="Active lots"
-                value={lots.length}
-                mono
-                align="center"
-                className="min-h-[160px]"
-                valueClassName="text-4xl"
+            {/* Right: leaf image */}
+            <div className="relative flex items-center justify-center">
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0 rounded-full bg-[color:var(--color-harv-mint)]/10 blur-3xl animate-pulse-glow"
               />
-              <MetricCard
-                label="Origin"
-                value={
-                  <span className="inline-flex flex-col items-center px-2 text-[0.78em] leading-tight">
-                    <span>Central</span>
-                    <span>America</span>
-                  </span>
-                }
-                tone="muted"
-                align="center"
-                className="min-h-[160px]"
-                valueClassName="text-[clamp(1rem,1.5vw,1.6rem)] leading-tight"
-              />
-              <MetricCard
-                label="Avg ticket"
-                value="$3.4k"
-                tone="mint"
-                align="center"
-                className="min-h-[160px]"
-                valueClassName="text-4xl"
-              />
-              <MetricCard
-                label="Chain"
-                value={
-                  <span className="inline-flex flex-col items-center px-2 text-[0.78em] leading-tight">
-                    <span>Hard</span>
-                    <span>hat</span>
-                  </span>
-                }
-                tone="gold"
-                align="center"
-                className="min-h-[160px]"
-                valueClassName="text-[clamp(1.2rem,1.6vw,1.8rem)]"
+              <Image
+                src="/harvverse/harv-leaf.png"
+                alt="Harvverse leaf mark"
+                width={480}
+                height={480}
+                priority
+                className="relative w-full max-w-[380px] animate-float-slow drop-shadow-[0_0_48px_color-mix(in_oklab,var(--color-harv-mint)_40%,transparent)]"
               />
             </div>
           </div>
 
-          <div className="relative flex items-center justify-center">
-            <CoffeeBeanArt className="relative aspect-square w-full max-w-[520px]" />
+          {/* ── Row 2: CTA buttons ──────────────────────────────────────── */}
+          <div className="mt-10 flex flex-wrap items-center gap-3">
+            <Link
+              href={`/partner/lots/${activeLot.code}`}
+              className="btn btn-primary btn-md inline-flex items-center gap-2"
+            >
+              View Lots
+              <ArrowRightIcon className="h-4 w-4" />
+            </Link>
+            <Link
+              href="/partner/dashboard"
+              className="btn btn-md border border-[color:var(--color-harv-text)]/22 bg-transparent text-harv-text hover:border-[color:var(--color-harv-mint)]/55 hover:bg-[color-mix(in_oklab,var(--color-harv-mint)_8%,transparent)]"
+            >
+              See your lots
+            </Link>
           </div>
+        </div>
+
+        {/* ── Row 3: StatsArc — full page width ──────────────────────── */}
+        <div className="relative w-full px-6 pb-20 sm:px-10 lg:px-16 lg:pb-28">
+          <StatsArc
+            items={[
+              { label: "Active lots", value: lots.length, tone: "default" },
+              { label: "Origin", value: "Central America", tone: "muted" },
+              { label: "Avg ticket", value: "$3.4k", tone: "mint" },
+              { label: "Chain", value: "Hardhat", tone: "cyan" },
+            ]}
+          />
         </div>
 
         <div className="divider-harv" />
@@ -150,16 +143,16 @@ const Home = () => {
       >
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {HOW_IT_WORKS.map((step, idx) => (
-            <GlassCard key={step.title} padding="lg" className="relative">
+            <div key={step.title} className="harv-protocol-card relative p-6 lg:p-7">
               <div className="flex items-start justify-between">
-                <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[color:var(--color-harv-mint)]/25 bg-[color:var(--color-harv-mint)]/8 text-[color:var(--color-harv-mint)]">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[color:var(--color-harv-mint)]/35 bg-[color:var(--color-harv-mint)]/10 text-[color:var(--color-harv-mint)]">
                   <step.icon className="h-5 w-5" />
                 </span>
                 <span className="font-mono text-xs text-muted-harv">0{idx + 1}</span>
               </div>
-              <h3 className="mt-5 text-lg font-medium text-harv-text">{step.title}</h3>
+              <h3 className="mt-5 text-lg font-semibold uppercase tracking-wide text-harv-text">{step.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-muted-harv">{step.desc}</p>
-            </GlassCard>
+            </div>
           ))}
         </div>
       </Section>
@@ -264,6 +257,10 @@ const Home = () => {
           ))}
         </div>
       </Section>
+
+      <p className="mx-auto max-w-7xl px-4 pb-10 font-mono text-[10px] uppercase tracking-[0.28em] text-[color:var(--color-harv-mint)] sm:px-6 lg:px-10">
+        Testnet demo · not financial advice
+      </p>
     </>
   );
 };

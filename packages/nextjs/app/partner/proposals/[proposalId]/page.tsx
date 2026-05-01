@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { ProposalCTA } from "./ProposalCTA";
 import { AIExplanationCard } from "~~/components/harvverse/AIExplanationCard";
 import { GlassCard } from "~~/components/harvverse/GlassCard";
+import { HarvverseLiveAgent } from "~~/components/harvverse/HarvverseLiveAgent";
 import { MetricCard } from "~~/components/harvverse/MetricCard";
 import { MonoHash } from "~~/components/harvverse/MonoHash";
 import { Section } from "~~/components/harvverse/Section";
@@ -44,6 +45,17 @@ const ProposalPage = async ({ params }: ProposalPageProps) => {
       description="Review the immutable proposal details below. Two wallet prompts are required: approve MockUSDC, then open partnership."
       actions={<StatusPill status={proposal.status} />}
     >
+      <HarvverseLiveAgent
+        variant="proposal"
+        className="mb-8 max-w-3xl"
+        lotCode={lot.code}
+        farmName={lot.farmName}
+        region={`${lot.region}, ${lot.country}`}
+        ticketLabel={formatCents(proposal.ticketCents)}
+        yieldCapLabel={`${(plan.yieldCapY1TenthsQQ / 10).toFixed(1)} qq`}
+        splitLabel={`${(plan.splitFarmerBps / 100).toFixed(0)}% farmer`}
+      />
+
       <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
         <div className="space-y-6">
           <GlassCard padding="lg">

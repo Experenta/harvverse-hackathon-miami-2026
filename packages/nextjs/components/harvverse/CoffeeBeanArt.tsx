@@ -16,8 +16,8 @@ export const CoffeeBeanArt = ({ className, variant = "hero" }: CoffeeBeanArtProp
             <stop offset="100%" stopColor="#040c0a" />
           </radialGradient>
           <radialGradient id="beanHighlight" cx="35%" cy="30%" r="40%">
-            <stop offset="0%" stopColor="#7fffd4" stopOpacity="0.55" />
-            <stop offset="100%" stopColor="#7fffd4" stopOpacity="0" />
+            <stop offset="0%" stopColor="#93d832" stopOpacity="0.5" />
+            <stop offset="100%" stopColor="#93d832" stopOpacity="0" />
           </radialGradient>
           <radialGradient id="beanGold" cx="55%" cy="60%" r="55%">
             <stop offset="0%" stopColor="#c8a96b" stopOpacity="0" />
@@ -25,8 +25,8 @@ export const CoffeeBeanArt = ({ className, variant = "hero" }: CoffeeBeanArtProp
             <stop offset="100%" stopColor="#c8a96b" stopOpacity="0" />
           </radialGradient>
           <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#7fffd4" stopOpacity="0.7" />
-            <stop offset="100%" stopColor="#22a06b" stopOpacity="0" />
+            <stop offset="0%" stopColor="#93d832" stopOpacity="0.75" />
+            <stop offset="100%" stopColor="#6766c4" stopOpacity="0" />
           </linearGradient>
           <filter id="beanBlur" x="-20%" y="-20%" width="140%" height="140%">
             <feGaussianBlur stdDeviation="2" />
@@ -80,8 +80,8 @@ export const CoffeeBeanArt = ({ className, variant = "hero" }: CoffeeBeanArtProp
             <path
               d="M -150 0 C -90 -38, -30 -28, 0 0 C 30 28, 90 38, 150 0"
               fill="none"
-              stroke="#7fffd4"
-              strokeOpacity="0.35"
+              stroke="#93d832"
+              strokeOpacity="0.4"
               strokeWidth="1.2"
               strokeLinecap="round"
             />
@@ -89,8 +89,8 @@ export const CoffeeBeanArt = ({ className, variant = "hero" }: CoffeeBeanArtProp
             <path
               d="M -140 -30 C -100 -70, -40 -90, 30 -85"
               fill="none"
-              stroke="#7fffd4"
-              strokeOpacity="0.25"
+              stroke="#93d832"
+              strokeOpacity="0.28"
               strokeWidth="2"
               strokeLinecap="round"
             />
@@ -107,11 +107,11 @@ export const CoffeeBeanArt = ({ className, variant = "hero" }: CoffeeBeanArtProp
 
         {/* Floating data dots */}
         <g>
-          <circle cx="100" cy="120" r="3" fill="#7fffd4" opacity="0.7" />
-          <circle cx="430" cy="180" r="2.5" fill="#c8a96b" opacity="0.7" />
-          <circle cx="80" cy="380" r="2" fill="#22a06b" opacity="0.7" />
-          <circle cx="450" cy="380" r="3" fill="#7fffd4" opacity="0.5" />
-          <circle cx="380" cy="80" r="1.5" fill="#7fffd4" opacity="0.6" />
+          <circle cx="100" cy="120" r="3" fill="#93d832" opacity="0.75" />
+          <circle cx="430" cy="180" r="2.5" fill="#6766c4" opacity="0.65" />
+          <circle cx="80" cy="380" r="2" fill="#67b9c1" opacity="0.7" />
+          <circle cx="450" cy="380" r="3" fill="#93d832" opacity="0.45" />
+          <circle cx="380" cy="80" r="1.5" fill="#93d832" opacity="0.55" />
         </g>
       </svg>
     </div>
