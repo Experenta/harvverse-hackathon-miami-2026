@@ -55,6 +55,10 @@
     "pnpm": ">=9"
   },
   "dependencies": {
-    "convex": "^1.35.1"
+    "@ai-sdk/anthropic": "^3.0.71",
+    "@ai-sdk/openai": "^3.0.53",
+    "ai": "^6.0.168",
+    "convex": "^1.35.1",
+    "minimatch": "^10.2.5"
   }
 }
